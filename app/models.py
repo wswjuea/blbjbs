@@ -21,7 +21,7 @@ class Admin(db.Model):
     name = db.Column(db.String(100), unique=True)
     pwd = db.Column(db.String(100))
     is_super = db.Column(db.SmallInteger)  # 0为超级管理员
-    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
+    # role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
     addtime = db.Column(db.DateTime, index=True, default=datetime.now)
     adminlogs = db.relationship("Adminlog", backref='admin')  # 管理员登录日志外键关系关联
     oplogs = db.relationship("Oplog", backref='admin')  # 管理员操作外键关系关联

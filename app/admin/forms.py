@@ -27,8 +27,7 @@ class LoginForm(FlaskForm):
         description="密码",
         render_kw={
             "class": "form-control",
-            "placeholder": "请输入密码！",
-            "required": "required"
+            "placeholder": "请输入密码！"
         }
     )
 
@@ -44,3 +43,48 @@ class LoginForm(FlaskForm):
         admin = Admin.query.filter_by(name=account).count()
         if admin == 0:
             raise ValidationError("账号不存在!")
+
+
+class PnForm(FlaskForm):
+    presale_license_number = StringField(
+        label="预售许可证号",
+        validators=[
+            DataRequired("请输入预售许可证号!")
+            # length(min=5, message="请输入大于5个字符")
+        ],
+        description="预售许可证号",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入预售许可证号！"
+        }
+    )
+    building_name = StringField(
+        label="项目备案名",
+        validators=[
+            DataRequired("请输入项目备案名!")
+            # length(min=5, message="请输入大于5个字符")
+        ],
+        description="项目备案名",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入项目备案名！"
+        }
+    )
+    building_promotion_name = StringField(
+        label="项目推广名",
+        validators=[
+            DataRequired("请输入项目推广名!")
+            # length(min=5, message="请输入大于5个字符")
+        ],
+        description="项目推广名",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入项目推广名！"
+        }
+    )
+    submit = SubmitField(
+        label="编辑",
+        render_kw={
+            "class": "btn btn-primary"
+        }
+    )
