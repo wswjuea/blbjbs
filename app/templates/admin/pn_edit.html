@@ -4,8 +4,8 @@
 <section class="content-header">
     <h1>数据管理系统</h1>
     <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> 管理员管理</a></li>
-        <li class="active">添加管理员</li>
+        <li><a href="#"><i class="fa fa-dashboard"></i> 楼盘推广名管理</a></li>
+        <li class="active">修改推广名</li>
     </ol>
 </section>
 <section class="content" id="showcontent">
@@ -13,7 +13,7 @@
         <div class="col-md-12">
             <div class="box box-primary">
                 <div class="box-header with-border">
-                    <h3 class="box-title">添加管理员</h3>
+                    <h3 class="box-title">修改推广名</h3>
                 </div>
                 <form role="form" method="post" novalidate>
                     <div class="box-body">
@@ -32,27 +32,27 @@
                         </div>
                         {% endfor %}
                         <div class="form-group">
-                            <label for="input_name">{{ form.name.label }}</label>
-                            {{ form.name }}
-                            {% for err in form.name.errors %}
+                            <label for="input_name">{{ form.presale_license_number.label }}</label>
+                            {{ form.presale_license_number(value=pn.预售许可证号) }}
+                            {% for err in form.presale_license_number.errors %}
                             <div class="col-md-12">
                                 <font style="color: red">{{ err }}</font>
                             </div>
                             {% endfor %}
                         </div>
                         <div class="form-group">
-                            <label for="input_pwd">{{ form.pwd.label }}</label>
-                            {{ form.pwd }}
-                            {% for err in form.pwd.errors %}
+                            <label for="input_name">{{ form.building_name.label }}</label>
+                            {{ form.building_name(value=pn.项目备案名) }}
+                            {% for err in form.building_name.errors %}
                             <div class="col-md-12">
                                 <font style="color: red">{{ err }}</font>
                             </div>
                             {% endfor %}
                         </div>
                         <div class="form-group">
-                            <label for="input_re_pwd">{{ form.repwd.label }}</label>
-                            {{ form.repwd }}
-                            {% for err in form.repwd.errors %}
+                            <label for="input_name">{{ form.building_promotion_name.label }}</label>
+                            {{ form.building_promotion_name(value=pn.项目推广名) }}
+                            {% for err in form.building_promotion_name.errors %}
                             <div class="col-md-12">
                                 <font style="color: red">{{ err }}</font>
                             </div>
@@ -73,8 +73,8 @@
 {% block js %}
 <script>
     $(document).ready(function () {
-        $("#g-11").addClass("active");
-        $("#g-11-1").addClass("active");
+        $("#g-2").addClass("active");
+        $("#g-2-1").addClass("active");
     });
 </script>
 {% endblock %}

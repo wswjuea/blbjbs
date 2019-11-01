@@ -4,14 +4,14 @@ from app import db
 
 # 标签
 class Promotion_name(db.Model):
-    __tablename__ = "promotion_name"
+    __tablename__ = "推广名"
     id = db.Column(db.Integer, primary_key=True)
-    presale_license_number = db.Column(db.String(255))
-    building_name = db.Column(db.String(255))
-    building_promotion_name = db.Column(db.String(255))
+    预售许可证号 = db.Column(db.String(255))
+    项目备案名 = db.Column(db.String(255))
+    项目推广名 = db.Column(db.String(255))
 
     def __repr__(self):
-        return "<promotion_name %r>" % self.presale_license_numbere
+        return "<promotion_name %r>" % self.预售许可证号
 
 
 # 管理员

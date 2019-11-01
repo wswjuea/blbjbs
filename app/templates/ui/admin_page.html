@@ -1,29 +1,31 @@
-{% macro page(data,url) %}
-{% if data %}
+{% macro page(data,url,key) %}
 <ul class="pagination pagination-sm no-margin pull-right">
-    <li><a href="{{ url_for(url,page=1) }}">首页</a></li>
-
-    {% if data.has_prev %}
-    <li><a href="{{ url_for(url,page=data.page-1) }}">上一页</a></li>
+    <li
+            {% if not data.has_prev %} class="disabled" {% endif %}>
+        <a href="{% if data.has_prev %}{{ url_for(url,page = data.page - 1,key=key) }}
+            {% else %}#{% endif %}">&laquo;
+        </a>
+    </li>
+    {% for p in data.iter_pages() %}
+    {% if p %}
+    {% if p == data.page %}
+    <li class="active">
+        <a href="{{ url_for(url, page = p,key=key) }}">{{ p }}</a>
+    </li>
     {% else %}
-    <li class="disabled"><a href="#">上一页</a></li>
+    <li>
+        <a href="{{ url_for(url, page = p,key=key) }}">{{ p }}</a>
+    </li>
     {% endif %}
-
-    {% for v in data.iter_pages(1,1,3,1) %}
-    {% if v == data.page %}
-    <li class="active"><a href="#">{{ v }}</a></li>
     {% else %}
-    <li><a href="{{ url_for(url,page=v) }}">{{ v }}</a></li>
+    <li class="disabled">
+        <a href="#">&hellip;</a>
+    </li>
     {% endif %}
     {% endfor %}
-
-    {% if data.has_next %}
-    <li><a href="{{ url_for(url,page=data.page+1) }}">下一页</a></li>
-    {% else %}
-    <li class="disabled"><a href="#">下一页</a></li>
-    {% endif %}
-
-    <li><a href="{{ url_for(url,page=data.pages) }}">尾页</a></li>
+    <li
+            {% if not data.has_next %} class="disabled" {% endif %}>
+        <a href="{% if data.has_next %}{{ url_for(url,page = data.page + 1,key=key) }}{% else %}#{% endif %}">&raquo;</a>
+    </li>
 </ul>
-{% endif %}
 {% endmacro %}
