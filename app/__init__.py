@@ -2,8 +2,10 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 import pymysql
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = \
     "mysql+pymysql://root:Blbj123456@rm-bp16nmlmn159wru4reo.mysql.rds.aliyuncs.com/movie?charset=utf8"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
