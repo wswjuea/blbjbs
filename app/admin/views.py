@@ -200,14 +200,21 @@ def pn_edit(id=None):
 def oplog_list(page=None):
     if page is None:
         page = 1
+    key = request.args.get("key", "")
     page_data = Oplog.query.join(  # 表有外键就需要关联
         Admin
     ).filter(
-        Admin.id == Oplog.admin_id
+        Admin.id == Oplog.admin_id,
+        or_(
+            Admin.name.like('%' + key + '%'),
+            Oplog.addtime.like('%' + key + '%'),
+            Oplog.reason.like('%' + key + '%'),
+            Oplog.ip.like('%' + key + '%')
+        )
     ).order_by(
         Oplog.addtime.desc()
     ).paginate(page=page, per_page=20)
-    return render_template('admin/oplog_list.html', page_data=page_data)
+    return render_template('admin/oplog_list.html', key=key, page_data=page_data)
 
 
 # 管理员登录日志
@@ -216,14 +223,20 @@ def oplog_list(page=None):
 def adminloginlog_list(page=None):
     if page is None:
         page = 1
+    key = request.args.get("key", "")
     page_data = Adminlog.query.join(
         Admin
     ).filter(
-        Admin.id == Adminlog.admin_id
+        Admin.id == Adminlog.admin_id,
+        or_(
+            Admin.name.like('%' + key + '%'),
+            Adminlog.addtime.like('%' + key + '%'),
+            Adminlog.ip.like('%' + key + '%')
+        )
     ).order_by(
         Adminlog.addtime.desc()
     ).paginate(page=page, per_page=20)
-    return render_template('admin/adminloginlog_list.html', page_data=page_data)
+    return render_template('admin/adminloginlog_list.html', key=key, page_data=page_data)
 
 
 # 添加管理员

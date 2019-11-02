@@ -17,11 +17,11 @@
                     <h3 class="box-title">管理员登录日志列表</h3>
                     <div class="box-tools">
                         <div class="input-group input-group-sm" style="width: 150px;">
-                            <input type="text" name="table_search" class="form-control pull-right"
+                            <input type="text" id="key_adl" name="table_search" class="form-control pull-right"
                                    placeholder="请输入关键字...">
 
                             <div class="input-group-btn">
-                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i>
+                                <button type="submit" id="do_search" class="btn btn-default"><i class="fa fa-search"></i>
                                 </button>
                             </div>
                         </div>
@@ -48,7 +48,7 @@
                     </table>
                 </div>
                 <div class="box-footer clearfix">
-                    {{ pg.page(page_data,'admin.adminloginlog_list') }}
+                    {{ pg.page(page_data,'admin.adminloginlog_list',key=key) }}
                 </div>
             </div>
         </div>
@@ -61,6 +61,10 @@
     $(document).ready(function () {
         $("#g-8").addClass("active");
         $("#g-8-2").addClass("active");
+        $("#do_search").click(function () {
+            var key = $("#key_adl").val();
+            location.href = "{{ url_for('admin.adminloginlog_list',page=1) }}?key=" + key;
+        });
     });
 </script>
 {% endblock %}
