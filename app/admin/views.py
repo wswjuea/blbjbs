@@ -201,6 +201,12 @@ def act_add():
     form = ActForm()
     if form.validate_on_submit():
         data = form.data
+        act_count = Activity.query.filter_by(
+            活动主题=data["theme"]
+        ).count()
+        if act_count >= 1:
+            flash("活动主题已存在!", "err")
+            return redirect(url_for('admin.act_add'))
         act = Activity(
             项目名称=data["building_promotion_name"],
             时间=data["date"],
