@@ -2,7 +2,7 @@ from datetime import datetime
 from app import db
 
 
-# 标签
+# 推广名
 class Promotion_name(db.Model):
     __tablename__ = "推广名"
     id = db.Column(db.Integer, primary_key=True)
@@ -11,7 +11,22 @@ class Promotion_name(db.Model):
     项目推广名 = db.Column(db.String(255))
 
     def __repr__(self):
-        return "<promotion_name %r>" % self.预售许可证号
+        return "<Promotion_name %r>" % self.预售许可证号
+
+
+# 活动
+class Activity(db.Model):
+    __tablename__ = "活动"
+    id = db.Column(db.Integer, primary_key=True)
+    项目名称 = db.Column(db.String(11))
+    时间 = db.Column(db.Date)
+    活动主办单位 = db.Column(db.String(255))
+    活动主题 = db.Column(db.String(255))
+    活动情况 = db.Column(db.String(255))
+    活动链接 = db.Column(db.String(255))
+
+    def __repr__(self):
+        return "<Activity %r>" % self.id
 
 
 # 管理员

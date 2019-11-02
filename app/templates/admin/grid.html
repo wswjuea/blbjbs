@@ -88,13 +88,18 @@
     <li class="treeview" id="g-6">
         <a href="#">
             <i class="fa fa-comments" aria-hidden="true"></i>
-            <span>评论管理</span>
-            <span class="label label-primary pull-right">1</span>
+            <span>活动管理</span>
+            <span class="label label-primary pull-right">2</span>
         </a>
         <ul class="treeview-menu">
             <li id="g-6-1">
-                <a href="comment_list.html">
-                    <i class="fa fa-circle-o"></i> 评论列表
+                <a href="{{ url_for('admin.act_add') }}">
+                    <i class="fa fa-circle-o"></i> 添加活动
+                </a>
+            </li>
+            <li id="g-6-2">
+                <a href="{{ url_for('admin.act_list',page=1) }}">
+                    <i class="fa fa-circle-o"></i> 活动列表
                 </a>
             </li>
         </ul>

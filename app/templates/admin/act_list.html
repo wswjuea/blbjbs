@@ -5,8 +5,8 @@
 <section class="content-header">
     <h1>数据管理系统</h1>
     <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> 管理员管理</a></li>
-        <li class="active">管理员列表</li>
+        <li><a href="#"><i class="fa fa-dashboard"></i> 活动管理</a></li>
+        <li class="active">活动列表</li>
     </ol>
 </section>
 <section class="content" id="showcontent">
@@ -14,14 +14,15 @@
         <div class="col-md-12">
             <div class="box box-primary">
                 <div class="box-header">
-                    <h3 class="box-title">管理员列表</h3>
+                    <h3 class="box-title">活动列表</h3>
                     <div class="box-tools">
                         <div class="input-group input-group-sm" style="width: 150px;">
-                            <input type="text" id="key_ad" name="table_search" class="form-control pull-right"
+                            <input type="text" id="key_act" name="table_search" class="form-control pull-right"
                                    placeholder="请输入关键字...">
 
                             <div class="input-group-btn">
-                                <button type="submit" id="do_search" class="btn btn-default"><i class="fa fa-search"></i>
+                                <button type="submit" class="btn btn-default" id="do_search"><i
+                                        class="fa fa-search"></i>
                                 </button>
                             </div>
                         </div>
@@ -39,27 +40,35 @@
                         <tbody>
                         <tr>
                             <th>编号</th>
-                            <th>管理员名称</th>
-                            <th>管理员类型</th>
-                            <th>添加时间</th>
+                            <th>项目名称</th>
+                            <th>时间</th>
+                            <th>活动主办单位</th>
+                            <th>活动主题</th>
+                            <th>活动情况</th>
+                            <th>活动链接</th>
+                            <th>操作事项</th>
                         </tr>
                         {% for v in page_data.items %}
                         <tr>
                             <td>{{ v.id }}</td>
-                            <td>{{ v.name }}</td>
-                            {% if v.is_super == 0 %}
-                            <td>超级管理员</td>
-                            {% else %}
-                            <td>普通管理员</td>
-                            {% endif %}
-                            <td>{{ v.addtime }}</td>
+                            <td>{{ v.项目名称 }}</td>
+                            <td>{{ v.时间 }}</td>
+                            <td>{{ v.活动主办单位 }}</td>
+                            <td>{{ v.活动主题 }}</td>
+                            <td>{{ v.活动情况 }}</td>
+                            <td>{{ v.活动链接 }}</td>
+                            <td>
+                                <a href="{{ url_for('admin.act_edit',id=v.id) }}" class="label label-success">编辑</a>
+                                &nbsp;
+                                <a href="{{ url_for('admin.act_del',id=v.id) }}" class="label label-danger">删除</a>
+                            </td>
                         </tr>
                         {% endfor %}
                         </tbody>
                     </table>
                 </div>
                 <div class="box-footer clearfix">
-                    {{ pg.page(page_data,'admin.admin_list',key=key) }}
+                    {{ pg.page(page_data,'admin.act_list',key=key) }}
                 </div>
             </div>
         </div>
@@ -70,12 +79,13 @@
 {% block js %}
 <script>
     $(document).ready(function () {
-        $("#g-11").addClass("active");
-        $("#g-11-2").addClass("active");
+        $("#g-6").addClass("active");
+        $("#g-6-2").addClass("active");
         $("#do_search").click(function () {
-            var key = $("#key_ad").val();
-            location.href = "{{ url_for('admin.admin_list',page=1) }}?key=" + key;
+            var key = $("#key_act").val();
+            location.href = "{{ url_for('admin.act_list',page=1) }}?key=" + key;
         });
     });
+
 </script>
 {% endblock %}

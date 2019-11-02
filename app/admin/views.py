@@ -1,7 +1,7 @@
 from . import admin
 from flask import render_template, redirect, url_for, flash, session, request
-from app.admin.forms import LoginForm, PnForm, PwdForm, AdminForm
-from app.models import Admin, Adminlog, Oplog, Promotion_name
+from app.admin.forms import LoginForm, PnForm, PwdForm, AdminForm, ActForm
+from app.models import Admin, Adminlog, Oplog, Promotion_name, Activity
 from app import db
 from functools import wraps
 import datetime
@@ -194,6 +194,98 @@ def pn_edit(id=None):
     return render_template('admin/pn_edit.html', form=form, pn=pn)
 
 
+# 添加活动
+@admin.route("/act/add/", methods=["GET", "POST"])
+@admin_login_req
+def act_add():
+    form = ActForm()
+    if form.validate_on_submit():
+        data = form.data
+        act = Activity(
+            项目名称=data["building_promotion_name"],
+            时间=data["date"],
+            活动主办单位=data["organizer"],
+            活动主题=data["theme"],
+            活动情况=data["situation"],
+            活动链接=data["link"]
+        )
+        db.session.add(act)
+        db.session.commit()
+        flash("添加活动成功!", "ok")
+
+        TransForm.oplog_add(o_type='add', type='act', da_attr=data["theme"])
+
+    return render_template("admin/act_add.html", form=form)
+
+
+# 活动列表
+@admin.route("/act/list/<int:page>/", methods=["GET"])
+@admin_login_req
+def act_list(page=None):
+    if page is None:
+        page = 1
+    key = request.args.get("key", "")
+    page_data = Activity.query.filter(
+        or_(
+            Activity.项目名称.like('%' + key + '%'),
+            Activity.活动主办单位.like('%' + key + '%'),
+            Activity.活动主题.like('%' + key + '%'),
+            Activity.活动情况.like('%' + key + '%'),
+            Activity.活动链接.like('%' + key + '%')
+        )
+    ).order_by(
+        Activity.id.desc()
+    ).paginate(page=page, per_page=20)
+    return render_template("admin/act_list.html", key=key, page_data=page_data)
+
+
+# 活动删除
+@admin.route("/act/del/<int:id>/", methods=["GET"])
+@admin_login_req
+def act_del(id=None):
+    act = Activity.query.filter_by(id=id).first_or_404()
+    db.session.delete(act)
+    db.session.commit()
+    flash("删除活动成功!", "ok")
+
+    TransForm.oplog_add(o_type='del', type='act', da_attr=act.活动主题)
+
+    return redirect(url_for('admin.act_list', page=1))
+
+
+# 活动编辑;修改
+@admin.route("/act/edit/<int:id>/", methods=["GET", "POST"])
+@admin_login_req
+def act_edit(id=None):
+    form = ActForm()
+    act = Activity.query.get_or_404(id)
+    if form.validate_on_submit():
+        data = form.data
+        act_count = Activity.query.filter_by(
+            活动主题=data["theme"]
+        ).count()
+        if act.活动主题 != data["theme"] and \
+                act_count >= 1:
+            flash("活动主题已存在!", "err")
+            return redirect(url_for('admin.act_edit', id=id))
+
+        act.项目名称 = data["building_promotion_name"]
+        act.时间 = data["date"]
+        act.活动主办单位 = data["organizer"]
+        act.活动主题 = data["theme"]
+        act.活动情况 = data["situation"]
+        act.活动链接 = data["link"]
+
+        db.session.add(act)
+        db.session.commit()
+        flash("修改活动成功!", "ok")
+
+        TransForm.oplog_add(o_type='edit', type='act', da_attr=data["theme"])
+
+        redirect(url_for('admin.act_edit', id=id))
+    return render_template('admin/act_edit.html', form=form, act=act)
+
+
 # 管理员操作日志
 @admin.route("/oplog/list/<int:page>/", methods=["GET"])
 @admin_login_req
@@ -207,7 +299,6 @@ def oplog_list(page=None):
         Admin.id == Oplog.admin_id,
         or_(
             Admin.name.like('%' + key + '%'),
-            Oplog.addtime.like('%' + key + '%'),
             Oplog.reason.like('%' + key + '%'),
             Oplog.ip.like('%' + key + '%')
         )
@@ -230,7 +321,6 @@ def adminloginlog_list(page=None):
         Admin.id == Adminlog.admin_id,
         or_(
             Admin.name.like('%' + key + '%'),
-            Adminlog.addtime.like('%' + key + '%'),
             Adminlog.ip.like('%' + key + '%')
         )
     ).order_by(
@@ -271,7 +361,12 @@ def admin_add():
 def admin_list(page=None):
     if page is None:
         page = 1
-    page_data = Admin.query.order_by(
+    key = request.args.get("key", "")
+    page_data = Admin.query.filter(
+        or_(
+            Admin.name.like('%' + key + '%')
+        )
+    ).order_by(
         Admin.addtime.desc()
-    ).paginate(page=page, per_page=10)
-    return render_template('admin/admin_list.html', page_data=page_data)
+    ).paginate(page=page, per_page=20)
+    return render_template('admin/admin_list.html', key=key, page_data=page_data)

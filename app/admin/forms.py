@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, FileField, TextAreaField, SelectField, SelectMultipleField
+from wtforms import StringField, PasswordField, SubmitField, FileField, TextAreaField, SelectField, SelectMultipleField, \
+    DateField
 from wtforms.validators import DataRequired, ValidationError, EqualTo, length
 
 from app.models import Admin
@@ -51,7 +52,6 @@ class PnForm(FlaskForm):
         label="预售许可证号",
         validators=[
             DataRequired("请输入预售许可证号!")
-            # length(min=5, message="请输入大于5个字符")
         ],
         description="预售许可证号",
         render_kw={
@@ -63,7 +63,6 @@ class PnForm(FlaskForm):
         label="项目备案名",
         validators=[
             DataRequired("请输入项目备案名!")
-            # length(min=5, message="请输入大于5个字符")
         ],
         description="项目备案名",
         render_kw={
@@ -75,7 +74,6 @@ class PnForm(FlaskForm):
         label="项目推广名",
         validators=[
             DataRequired("请输入项目推广名!")
-            # length(min=5, message="请输入大于5个字符")
         ],
         description="项目推广名",
         render_kw={
@@ -91,18 +89,79 @@ class PnForm(FlaskForm):
     )
 
 
-# 推广名搜索
-class PnSearchForm(FlaskForm):
-    pn_search = StringField(
+# 添加活动
+class ActForm(FlaskForm):
+    building_promotion_name = StringField(
+        label="项目名称",
+        validators=[
+            DataRequired("请输入项目名称!")
+        ],
+        description="项目名称",
         render_kw={
-            "class": "form-control pull-right",
-            "placeholder": "请输入关键字..."
+            "class": "form-control",
+            "placeholder": "请输入项目名称！"
+        }
+    )
+    date = DateField(
+        label="时间",
+        validators=[
+            DataRequired("请输入时间!")
+        ],
+        description="时间",
+        render_kw={
+            "class": "form-control",
+            "id": "input_activity_time",
+            "placeholder": "请输入时间！"
+        }
+    )
+    organizer = StringField(
+        label="活动主办单位",
+        validators=[
+            DataRequired("请输入活动主办单位!")
+        ],
+        description="活动主办单位",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入活动主办单位！"
+        }
+    )
+    theme = StringField(
+        label="活动主题",
+        validators=[
+            DataRequired("请输入活动主题!")
+        ],
+        description="活动主题",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入活动主题！"
+        }
+    )
+    situation = StringField(
+        label="活动情况",
+        validators=[
+            DataRequired("请输入活动情况!")
+        ],
+        description="活动情况",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入活动情况！"
+        }
+    )
+    link = StringField(
+        label="活动链接",
+        validators=[
+            DataRequired("请输入活动链接!")
+        ],
+        description="活动链接",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入活动链接！"
         }
     )
     submit = SubmitField(
-        label="搜索",
+        label="编辑",
         render_kw={
-            "class": "btn btn-default"
+            "class": "btn btn-primary"
         }
     )
 
