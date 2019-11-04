@@ -1,7 +1,7 @@
 from . import admin
 from flask import render_template, redirect, url_for, flash, session, request
 from app.admin.forms import LoginForm, PnForm, PwdForm, AdminForm, ActForm
-from app.models import Admin, Adminlog, Oplog, Promotion_name, Activity, User
+from app.models import Admin, Adminlog, Oplog, Promotion_name, Activity, User, Histworm, Histlatlng, Landhistsup
 from app import db
 from functools import wraps
 import datetime
@@ -414,3 +414,39 @@ def user_del(id=None):
     TransForm.oplog_add(o_type='del', type='user', da_attr=user.email)
 
     return redirect(url_for('admin.user_list', page=1))
+
+
+# 楼盘列表
+@admin.route("/hist/list/<int:page>/", methods=["GET"])
+@admin_login_req
+def hist_list(page=None):
+    if page is None:
+        page = 1
+    # key = request.args.get("key", "")
+    # page_data = Promotion_name.query.join(
+    #     Histlatlng,
+    #     Histlatlng.presale_license_number == Promotion_name.预售许可证号
+    # ).order_by(
+    #     Promotion_name.id.desc()
+    # )
+    page_data = db.session.query(
+        Promotion_name,
+        Histlatlng,
+        Landhistsup
+    ).join(
+        Histlatlng,
+        Histlatlng.presale_license_number == Promotion_name.预售许可证号
+    ).join(
+        Landhistsup,
+        Landhistsup.presale_license_number == Promotion_name.预售许可证号
+    ).order_by(
+        Promotion_name.id.desc()
+    ).paginate(page=page, per_page=20)
+    # page_data = db.session.query(
+    #     Histworm,
+    #     Promotion_name
+    # ).join(
+    #     Promotion_name,
+    #     Histworm.预售许可证号 == Promotion_name.预售许可证号
+    # ).paginate(page=page, per_page=20)
+    return render_template('admin/hist_list.html', page_data=page_data)

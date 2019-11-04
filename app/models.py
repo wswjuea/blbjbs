@@ -4,6 +4,7 @@ from app import db
 
 # 推广名
 class Promotion_name(db.Model):
+    __bind_key__ = "blbj_crawler"
     __tablename__ = "推广名"
     id = db.Column(db.Integer, primary_key=True)
     预售许可证号 = db.Column(db.String(255))
@@ -16,6 +17,7 @@ class Promotion_name(db.Model):
 
 # 活动
 class Activity(db.Model):
+    __bind_key__ = "blbj_crawler"
     __tablename__ = "活动"
     id = db.Column(db.Integer, primary_key=True)
     项目名称 = db.Column(db.String(11))
@@ -88,3 +90,47 @@ class User(db.Model):
 
     def __repr__(self):
         return "<User %r>" % self.id
+
+
+# 房管网_销售项目2层_已清洗
+class Histworm(db.Model):
+    __bind_key__ = "blbj_crawler"
+    __tablename__ = "房管网_销售项目2层_已清洗"
+    id = db.Column(db.Integer, primary_key=True)
+    预售许可证号 = db.Column(db.CHAR(50))
+    项目名称 = db.Column(db.CHAR(50))
+    物业公司 = db.Column(db.CHAR(100))
+    占地面积 = db.Column(db.DECIMAL(15, 3))
+    总建筑体量 = db.Column(db.Text)
+    容积率 = db.Column(db.Text)
+    预售商品房 = db.Column(db.CHAR(50))
+
+    def __repr__(self):
+        return "<Histworm %r>" % self.id
+
+
+# hist_latlng
+class Histlatlng(db.Model):
+    __bind_key__ = "blbj_crawler"
+    __tablename__ = "hist_latlng"
+    id = db.Column(db.Integer, primary_key=True)
+    presale_license_number = db.Column(db.String(255))
+    building_address = db.Column(db.String(255))
+    lat = db.Column(db.DECIMAL(9, 6))
+    lng = db.Column(db.DECIMAL(9, 6))
+
+    def __repr__(self):
+        return "<Histlatlng %r>" % self.id
+
+
+# land_histsup
+class Landhistsup(db.Model):
+    __bind_key__ = "blbj_crawler"
+    __tablename__ = "land_histsup"
+    id = db.Column(db.Integer, primary_key=True)
+    plotnum = db.Column(db.String(255))
+    building_promotion_name = db.Column(db.String(255))
+    presale_license_number = db.Column(db.String(255))
+
+    def __repr__(self):
+        return "<Landhistsup %r>" % self.id
