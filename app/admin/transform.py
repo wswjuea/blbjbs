@@ -9,7 +9,8 @@ op_type = {
 }
 tb_type = {
     'pn': '推广名',
-    'act': '活动'
+    'act': '活动',
+    'user': '会员'
 }
 
 

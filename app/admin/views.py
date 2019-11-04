@@ -1,7 +1,7 @@
 from . import admin
 from flask import render_template, redirect, url_for, flash, session, request
 from app.admin.forms import LoginForm, PnForm, PwdForm, AdminForm, ActForm
-from app.models import Admin, Adminlog, Oplog, Promotion_name, Activity
+from app.models import Admin, Adminlog, Oplog, Promotion_name, Activity, User
 from app import db
 from functools import wraps
 import datetime
@@ -376,3 +376,41 @@ def admin_list(page=None):
         Admin.addtime.desc()
     ).paginate(page=page, per_page=20)
     return render_template('admin/admin_list.html', key=key, page_data=page_data)
+
+
+# 会员列表
+@admin.route("/user/list/<int:page>/", methods=["GET"])
+@admin_login_req
+def user_list(page=None):
+    if page is None:
+        page = 1
+    key = request.args.get("key", "")
+    page_data = User.query.filter(
+        or_(
+            User.nickname.like('%' + key + '%'),
+            User.email.like('%' + key + '%')
+        )
+    ).order_by(
+        User.id.desc()
+    ).paginate(page=page, per_page=20)
+    return render_template('admin/user_list.html', page_data=page_data, key=key)
+
+
+@admin.route("/user/view/<int:id>/", methods=["GET"])
+@admin_login_req
+def user_view(id=None):
+    user = User.query.get_or_404(int(id))
+    return render_template('admin/user_view.html', user=user)
+
+
+# 删除会员
+@admin.route("/user/del/<int:id>/", methods=["GET"])
+@admin_login_req
+def user_del(id=None):
+    user = User.query.get_or_404(int(id))
+    db.session.delete(user)
+    db.session.commit()
+    flash("删除会员成功!", "ok")
+    TransForm.oplog_add(o_type='del', type='user', da_attr=user.email)
+
+    return redirect(url_for('admin.user_list', page=1))

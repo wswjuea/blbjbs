@@ -72,3 +72,19 @@ class Oplog(db.Model):
 
     def __repr__(self):
         return "<Oplog %r>" % self.id
+
+
+# 用户
+class User(db.Model):
+    __bind_key__ = "ginger"
+    __tablename__ = "user"
+    id = db.Column(db.Integer, primary_key=True)
+    create_time = db.Column(db.Integer)
+    password = db.Column(db.String(100))
+    email = db.Column(db.String(24), unique=True)
+    status = db.Column(db.SmallInteger)
+    nickname = db.Column(db.String(24))
+    auth = db.Column(db.SmallInteger)
+
+    def __repr__(self):
+        return "<User %r>" % self.id
