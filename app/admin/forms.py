@@ -260,7 +260,7 @@ class AdminForm(FlaskForm):
     )
 
 
-# 添加活动
+# 添加楼盘
 class HistForm(FlaskForm):
     presale_license_number = StringField(
         label="预售许可证号",
@@ -271,6 +271,94 @@ class HistForm(FlaskForm):
         render_kw={
             "class": "form-control",
             "placeholder": "请输入预售许可证号！"
+        }
+    )
+    building_name = StringField(
+        label="项目备案名",
+        validators=[
+            DataRequired("请输入项目备案名!")
+        ],
+        description="项目备案名",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入项目备案名！"
+        }
+    )
+    building_promotion_name = StringField(
+        label="项目推广名",
+        validators=[
+            DataRequired("请输入项目推广名!")
+        ],
+        description="项目推广名",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入项目推广名！"
+        }
+    )
+    building_address = StringField(
+        label="项目地址",
+        validators=[
+            DataRequired("请输入项目地址!")
+        ],
+        description="项目地址",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入项目地址！"
+        }
+    )
+    lng = FloatField(
+        label="经度",
+        validators=[
+            DataRequired("请输入正确的经度!")
+        ],
+        description="经度",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入经度！"
+        }
+    )
+    lat = FloatField(
+        label="纬度",
+        validators=[
+            DataRequired("请输入正确的纬度!")
+        ],
+        description="纬度",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入纬度！"
+        }
+    )
+    plotnum = StringField(
+        label="地块编号",
+        validators=[
+            DataRequired("请输入地块编号!")
+        ],
+        description="地块编号",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入地块编号！"
+        }
+    )
+    submit = SubmitField(
+        label="编辑",
+        render_kw={
+            "class": "btn btn-primary"
+        }
+    )
+
+
+# 修改楼盘
+class HistEditForm(FlaskForm):
+    presale_license_number = StringField(
+        label="预售许可证号",
+        validators=[
+            DataRequired("请输入预售许可证号!")
+        ],
+        description="预售许可证号",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入预售许可证号！",
+            "readonly": "true"
         }
     )
     building_name = StringField(

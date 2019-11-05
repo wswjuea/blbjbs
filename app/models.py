@@ -97,8 +97,16 @@ class Histworm(db.Model):
     __bind_key__ = "blbj_crawler"
     __tablename__ = "房管网_销售项目2层_已清洗"
     id = db.Column(db.Integer, primary_key=True)
+    开发单位 = db.Column(db.CHAR(50))
     预售许可证号 = db.Column(db.CHAR(50))
+    发证日期 = db.Column(db.Date)
+    所在地区 = db.Column(db.CHAR(20))
+    样本区域 = db.Column(db.CHAR(20))
+    项目测算面积 = db.Column(db.DECIMAL(10, 2))
     项目名称 = db.Column(db.CHAR(50))
+    开盘日期 = db.Column(db.Date)
+    售楼电话 = db.Column(db.CHAR(30))
+    房源总量 = db.Column(db.SmallInteger)
     物业公司 = db.Column(db.CHAR(100))
     占地面积 = db.Column(db.DECIMAL(15, 3))
     总建筑体量 = db.Column(db.Text)

@@ -1,6 +1,6 @@
 from . import admin
 from flask import render_template, redirect, url_for, flash, session, request
-from app.admin.forms import LoginForm, PnForm, PwdForm, AdminForm, ActForm, HistForm
+from app.admin.forms import LoginForm, PnForm, PwdForm, AdminForm, ActForm, HistForm, HistEditForm
 from app.models import Admin, Adminlog, Oplog, Promotion_name, Activity, User, Histworm, Histlatlng, Landhistsup
 from app import db
 from functools import wraps
@@ -494,8 +494,12 @@ def hist_add():
 @admin.route("/hist/edit/<int:id>/<string:presale_license_number>/", methods=["GET", "POST"])
 @admin_login_req
 def hist_edit(id=None, presale_license_number=None):
-    form = HistForm()
+    form = HistEditForm()
     hist = Promotion_name.query.get_or_404(int(id))
+
+    histworm = Histworm.query.filter(
+        Histworm.预售许可证号 == presale_license_number
+    ).first()
 
     hist_latlng = Histlatlng.query.filter(
         Histlatlng.presale_license_number == presale_license_number
@@ -563,7 +567,8 @@ def hist_edit(id=None, presale_license_number=None):
         TransForm.oplog_add(o_type='edit', type='pl3', da_attr=form.presale_license_number.data)
 
         redirect(url_for('admin.hist_edit', id=id, presale_license_number=presale_license_number))
-    return render_template('admin/hist_edit.html', form=form, hist=hist, hist_latlng=hist_latlng, hist_land=hist_land)
+    return render_template('admin/hist_edit.html', form=form, hist=hist, hist_latlng=hist_latlng, hist_land=hist_land,
+                           histworm=histworm)
 
 
 # 删除楼盘

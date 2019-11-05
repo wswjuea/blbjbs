@@ -1,5 +1,18 @@
 {% extends "admin/admin.html" %}
 
+{% block css %}
+<style>
+    .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+        vertical-align: middle;
+        text-align: left;
+    }
+
+    .td_bd {
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <section class="content-header">
     <h1>数据管理系统</h1>
@@ -94,6 +107,64 @@
                             </div>
                             {% endfor %}
                         </div>
+                    </div>
+                    <div class="box-body table-responsive no-padding">
+                        <table class="table table-hover">
+                            <tbody>
+                            <tr>
+                                <td class="td_bd">开发单位：</td>
+                                <td>{{ histworm.开发单位 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">发证日期：</td>
+                                <td>{{ histworm.发证日期 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">所在地区：</td>
+                                <td>{{ histworm.所在地区 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">样本区域：</td>
+                                <td>{{ histworm.样本区域 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">项目测算面积：</td>
+                                <td>{{ histworm.项目测算面积 }}平方米</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">开盘日期：</td>
+                                <td>{{ histworm.开盘日期 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">售楼电话：</td>
+                                <td>{{ histworm.售楼电话 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">房源总量：</td>
+                                <td>{{ histworm.房源总量 }}套</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">物业公司：</td>
+                                <td>{{ histworm.物业公司 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">占地面积：</td>
+                                <td>{{ histworm.占地面积 }}平方米</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">总建筑体量：</td>
+                                <td>{{ histworm.总建筑体量 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">容积率：</td>
+                                <td>{{ histworm.容积率 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">预售商品房：</td>
+                                <td>{{ histworm.预售商品房 }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                     <div class="box-footer">
                         {{ form.csrf_token }}
