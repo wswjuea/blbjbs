@@ -1,6 +1,6 @@
 from . import admin
 from flask import render_template, redirect, url_for, flash, session, request
-from app.admin.forms import LoginForm, PnForm, PwdForm, AdminForm, ActForm
+from app.admin.forms import LoginForm, PnForm, PwdForm, AdminForm, ActForm, HistForm
 from app.models import Admin, Adminlog, Oplog, Promotion_name, Activity, User, Histworm, Histlatlng, Landhistsup
 from app import db
 from functools import wraps
@@ -422,31 +422,173 @@ def user_del(id=None):
 def hist_list(page=None):
     if page is None:
         page = 1
-    # key = request.args.get("key", "")
-    # page_data = Promotion_name.query.join(
-    #     Histlatlng,
-    #     Histlatlng.presale_license_number == Promotion_name.预售许可证号
-    # ).order_by(
-    #     Promotion_name.id.desc()
-    # )
+    key = request.args.get("key", "")
     page_data = db.session.query(
         Promotion_name,
         Histlatlng,
         Landhistsup
-    ).join(
+    ).outerjoin(
         Histlatlng,
         Histlatlng.presale_license_number == Promotion_name.预售许可证号
-    ).join(
+    ).outerjoin(
         Landhistsup,
         Landhistsup.presale_license_number == Promotion_name.预售许可证号
+    ).filter(
+        or_(
+            Promotion_name.预售许可证号.like('%' + key + '%'),
+            Promotion_name.项目备案名.like('%' + key + '%'),
+            Promotion_name.项目推广名.like('%' + key + '%'),
+            Histlatlng.building_address.like('%' + key + '%'),
+            Landhistsup.plotnum.like('%' + key + '%')
+        )
     ).order_by(
         Promotion_name.id.desc()
     ).paginate(page=page, per_page=20)
-    # page_data = db.session.query(
-    #     Histworm,
-    #     Promotion_name
-    # ).join(
-    #     Promotion_name,
-    #     Histworm.预售许可证号 == Promotion_name.预售许可证号
-    # ).paginate(page=page, per_page=20)
-    return render_template('admin/hist_list.html', page_data=page_data)
+    return render_template('admin/hist_list.html', page_data=page_data, key=key)
+
+
+# 添加楼盘
+@admin.route("/hist/add/", methods=["GET", "POST"])
+@admin_login_req
+def hist_add():
+    form = HistForm()
+    if form.validate_on_submit():
+        data = form.data
+        hist_count = Promotion_name.query.filter_by(
+            预售许可证号=data["presale_license_number"]
+        ).count()
+        if hist_count >= 1:
+            flash("预售许可证号已存在!", "err")
+            return redirect(url_for('admin.hist_add'))
+
+        hist = Promotion_name(
+            预售许可证号=data["presale_license_number"],
+            项目备案名=data["building_name"],
+            项目推广名=data["building_promotion_name"]
+        )
+        hist_latlng = Histlatlng(
+            presale_license_number=data["presale_license_number"],
+            building_address=data["building_address"],
+            lng=data["lng"],
+            lat=data["lat"]
+        )
+        hist_land = Landhistsup(
+            plotnum=data["plotnum"],
+            building_promotion_name=data["building_promotion_name"],
+            presale_license_number=data["presale_license_number"]
+        )
+        db.session.add(hist)
+        db.session.commit()
+        db.session.add(hist_latlng)
+        db.session.commit()
+        db.session.add(hist_land)
+        db.session.commit()
+        flash("添加成功!", "ok")
+
+        TransForm.oplog_add(o_type='add', type='pl3', da_attr=data["presale_license_number"])
+
+    return render_template("admin/hist_add.html", form=form)
+
+
+# 楼盘编辑
+@admin.route("/hist/edit/<int:id>/<string:presale_license_number>/", methods=["GET", "POST"])
+@admin_login_req
+def hist_edit(id=None, presale_license_number=None):
+    form = HistForm()
+    hist = Promotion_name.query.get_or_404(int(id))
+
+    hist_latlng = Histlatlng.query.filter(
+        Histlatlng.presale_license_number == presale_license_number
+    ).first()
+    hist_latlng_count = Histlatlng.query.filter(
+        Histlatlng.presale_license_number == presale_license_number
+    ).count()
+
+    hist_land = Landhistsup.query.filter(
+        Landhistsup.presale_license_number == presale_license_number
+    ).first()
+    hist_land_count = Landhistsup.query.filter(
+        Landhistsup.presale_license_number == presale_license_number
+    ).count()
+
+    if form.validate_on_submit():
+        data = form.data
+        hist_count = Promotion_name.query.filter_by(
+            预售许可证号=data["presale_license_number"]
+        ).count()
+        if hist.预售许可证号 != data["presale_license_number"] and \
+                hist_count >= 1:  # 判断和标签是否重复
+            flash("预售许可证号已存在!", "err")
+            return redirect(url_for('admin.hist_edit', id=id, presale_license_number=presale_license_number))
+
+        hist.预售许可证号 = form.presale_license_number.data
+        hist.项目备案名 = form.building_name.data
+        hist.项目推广名 = form.building_promotion_name.data
+
+        if hist_latlng_count >= 1:
+            hist_latlng.presale_license_number = form.presale_license_number.data
+            hist_latlng.building_address = form.building_address.data
+            hist_latlng.lng = form.lng.data
+            hist_latlng.lat = form.lat.data
+        else:
+            hist_latlng = Histlatlng(
+                presale_license_number=form.presale_license_number.data,
+                building_address=form.building_address.data,
+                lng=form.lng.data,
+                lat=form.lat.data
+            )
+
+        if hist_land_count >= 1:
+            hist_land.plotnum = form.plotnum.data
+            hist_land.building_promotion_name = form.building_promotion_name.data
+            hist_land.presale_license_number = form.presale_license_number.data
+        else:
+            hist_land = Landhistsup(
+                plotnum=form.plotnum.data,
+                building_promotion_name=form.building_promotion_name.data,
+                presale_license_number=form.presale_license_number.data
+            )
+
+        db.session.add(hist)
+        db.session.commit()
+
+        db.session.add(hist_latlng)
+        db.session.commit()
+
+        db.session.add(hist_land)
+        db.session.commit()
+
+        flash("修改成功!", "ok")
+
+        TransForm.oplog_add(o_type='edit', type='pl3', da_attr=form.presale_license_number.data)
+
+        redirect(url_for('admin.hist_edit', id=id, presale_license_number=presale_license_number))
+    return render_template('admin/hist_edit.html', form=form, hist=hist, hist_latlng=hist_latlng, hist_land=hist_land)
+
+
+# 删除楼盘
+@admin.route("/hist/del/<int:id>/<string:presale_license_number>/", methods=["GET"])
+@admin_login_req
+def hist_del(id=None, presale_license_number=None):
+    hist = Promotion_name.query.get_or_404(int(id))
+    db.session.delete(hist)
+    db.session.commit()
+
+    hist_latlng = Histlatlng.query.filter(
+        Histlatlng.presale_license_number == presale_license_number
+    )
+    if hist_latlng.count() >= 1:
+        db.session.delete(hist_latlng.first())
+        db.session.commit()
+
+    hist_land = Landhistsup.query.filter(
+        Landhistsup.presale_license_number == presale_license_number
+    )
+    if hist_land.count() >= 1:
+        db.session.delete(hist_land.first())
+        db.session.commit()
+
+    flash("删除成功!", "ok")
+    TransForm.oplog_add(o_type='del', type='pl3', da_attr=hist.预售许可证号)
+
+    return redirect(url_for('admin.hist_list', page=1))

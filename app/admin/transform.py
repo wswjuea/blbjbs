@@ -10,7 +10,8 @@ op_type = {
 tb_type = {
     'pn': '推广名',
     'act': '活动',
-    'user': '会员'
+    'user': '会员',
+    'pl3': '推广名&hist_latlng&land_histsup'
 }
 
 

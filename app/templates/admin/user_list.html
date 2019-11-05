@@ -50,7 +50,7 @@
                             <td>{{ v.email }}</td>
                             <td>{{ v.nickname }}</td>
                             <td>
-                                <a class="label label-success" href="{{ url_for('admin.user_view',id=v.id) }}">查看</a>
+                                <a href="{{ url_for('admin.user_view',id=v.id) }}" class="label label-success">查看</a>
                                 &nbsp;
                                 <a href="{{ url_for('admin.user_del',id=v.id) }}" class="label label-danger">删除</a>
                             </td>

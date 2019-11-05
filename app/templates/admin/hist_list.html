@@ -17,7 +17,7 @@
                     <h3 class="box-title">楼盘列表</h3>
                     <div class="box-tools">
                         <div class="input-group input-group-sm" style="width: 150px;">
-                            <input type="text" id="key_pn" name="table_search" class="form-control pull-right"
+                            <input type="text" id="key_hist" name="table_search" class="form-control pull-right"
                                    placeholder="请输入关键字...">
 
                             <div class="input-group-btn">
@@ -60,9 +60,9 @@
                             <td>{{ v.Histlatlng.lat }}</td>
                             <td>{{ v.Landhistsup.plotnum }}</td>
                             <td>
-                                <a href="" class="label label-success">编辑</a>
+                                <a href="{{ url_for('admin.hist_edit',id=v.Promotion_name.id,presale_license_number=v.Promotion_name.预售许可证号) }}" class="label label-success">编辑</a>
                                 &nbsp;
-                                <a href="" class="label label-danger">删除</a>
+                                <a href="{{ url_for('admin.hist_del',id=v.Promotion_name.id,presale_license_number=v.Promotion_name.预售许可证号) }}" class="label label-danger">删除</a>
                             </td>
                         </tr>
                         {% endfor %}
@@ -70,7 +70,7 @@
                     </table>
                 </div>
                 <div class="box-footer clearfix">
-                    {{ pg.page(page_data,'admin.hist_list') }}
+                    {{ pg.page(page_data,'admin.hist_list',key=key) }}
                 </div>
             </div>
         </div>
@@ -83,10 +83,10 @@
     $(document).ready(function () {
         $("#g-3").addClass("active");
         $("#g-3-2").addClass("active");
-        // $("#do_search").click(function () {
-        //     var key = $("#key_pn").val();
-        //     location.href = "{{ url_for('admin.hist_list',page=1) }}?key=" + key;
-        // });
+        $("#do_search").click(function () {
+            var key = $("#key_hist").val();
+            location.href = "{{ url_for('admin.hist_list',page=1) }}?key=" + key;
+        });
     });
 
 </script>
