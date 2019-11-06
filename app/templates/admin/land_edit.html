@@ -1,0 +1,201 @@
+{% extends "admin/admin.html" %}
+
+{% block css %}
+<style>
+    .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+        vertical-align: middle;
+        text-align: left;
+    }
+
+    .td_bd {
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="content-header">
+    <h1>数据管理系统</h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> 地块管理</a></li>
+        <li class="active">修改地块</li>
+    </ol>
+</section>
+<section class="content" id="showcontent">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">修改地块</h3>
+                </div>
+                <form role="form" method="post" novalidate>
+                    <div class="box-body">
+                        {% for msg in get_flashed_messages(category_filter=["ok"]) %}
+                        <div class="alert alert-success alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <h4><i class="icon fa fa-check"></i> 操作成功 </h4>
+                            {{ msg }}
+                        </div>
+                        {% endfor %}
+                        {% for msg in get_flashed_messages(category_filter=["err"]) %}
+                        <div class="alert alert-danger alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <h4><i class="icon fa fa-ban"></i> 操作失败 </h4>
+                            {{ msg }}
+                        </div>
+                        {% endfor %}
+                        <div class="form-group">
+                            <label for="input_name">{{ form.land_detail.label }}</label>
+                            {{ form.land_detail(value=land.地块详情) }}
+                            {% for err in form.land_detail.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="input_name">{{ form.plotnum.label }}</label>
+                            {{ form.plotnum(value=landpart2.地块编号) }}
+                            {% for err in form.plotnum.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="input_name">{{ form.total_land_area.label }}</label>
+                            {{ form.total_land_area(value=land.总用地面积) }}
+                            {% for err in form.total_land_area.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="input_name">{{ form.allocated_area.label }}</label>
+                            {{ form.allocated_area(value=land.划拨面积) }}
+                            {% for err in form.allocated_area.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="input_name">{{ form.house_area.label }}</label>
+                            {{ form.house_area(value=land.住宅面积) }}
+                            {% for err in form.house_area.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="input_name">{{ form.commercial_area.label }}</label>
+                            {{ form.commercial_area(value=land.商业面积) }}
+                            {% for err in form.commercial_area.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="input_name">{{ form.office_area.label }}</label>
+                            {{ form.office_area(value=land.办公面积) }}
+                            {% for err in form.office_area.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="input_name">{{ form.other_area.label }}</label>
+                            {{ form.other_area(value=land.其他面积) }}
+                            {% for err in form.other_area.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="input_name">{{ form.building_density.label }}</label>
+                            {{ form.building_density(value=land.建筑密度) }}
+                            {% for err in form.building_density.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="input_name">{{ form.building_height.label }}</label>
+                            {{ form.building_height(value=land.建筑高度) }}
+                            {% for err in form.building_height.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="input_name">{{ form.greening_rate.label }}</label>
+                            {{ form.greening_rate(value=land.绿地率) }}
+                            {% for err in form.greening_rate.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="input_name">{{ form.remarks.label }}</label>
+                            {{ form.remarks(value=land.备注) }}
+                            {% for err in form.remarks.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="input_name">{{ form.block_location.label }}</label>
+                            {{ form.block_location(value=landpart1.地块位置) }}
+                            {% for err in form.block_location.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="input_name">{{ form.lng.label }}</label>
+                            {{ form.lng(value=land_latlng.lng) }}
+                            {% for err in form.lng.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="input_name">{{ form.lat.label }}</label>
+                            {{ form.lat(value=land_latlng.lat) }}
+                            {% for err in form.lat.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        {{ form.csrf_token }}
+                        {{ form.submit }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script>
+    $(document).ready(function () {
+        $("#g-4").addClass("active");
+        $("#g-4-1").addClass("active");
+    });
+</script>
+{% endblock %}

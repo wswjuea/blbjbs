@@ -1,7 +1,8 @@
 from . import admin
 from flask import render_template, redirect, url_for, flash, session, request
-from app.admin.forms import LoginForm, PnForm, PwdForm, AdminForm, ActForm, HistForm, HistEditForm
-from app.models import Admin, Adminlog, Oplog, Promotion_name, Activity, User, Histworm, Histlatlng, Landhistsup
+from app.admin.forms import LoginForm, PnForm, PwdForm, AdminForm, ActForm, HistForm, HistEditForm, LandEditForm
+from app.models import Admin, Adminlog, Oplog, Promotion_name, Activity, User, Histworm, Histlatlng, Landhistsup, \
+    Landmanual, Landpart1, Landpart2, Landlatlng
 from app import db
 from functools import wraps
 import datetime
@@ -597,3 +598,101 @@ def hist_del(id=None, presale_license_number=None):
     TransForm.oplog_add(o_type='del', type='pl3', da_attr=hist.预售许可证号)
 
     return redirect(url_for('admin.hist_list', page=1))
+
+
+# 地块列表
+@admin.route("/land/list/<int:page>/", methods=["GET"])
+@admin_login_req
+def land_list(page=None):
+    if page is None:
+        page = 1
+    key = request.args.get("key", "")
+    page_data = db.session.query(
+        Landmanual,
+        Landpart1,
+        Landpart2,
+        Landhistsup
+    ).outerjoin(
+        Landpart1,
+        Landpart1.地块详情 == Landmanual.地块详情
+    ).outerjoin(
+        Landpart2,
+        Landpart2.地块详情 == Landmanual.地块详情
+    ).outerjoin(
+        Landhistsup,
+        Landhistsup.plotnum == Landpart2.地块编号
+    ).group_by(
+        Landmanual.地块详情
+    ).filter(
+        or_(
+            Landpart1.标题.like('%' + key + '%'),
+            Landpart2.地块编号.like('%' + key + '%'),
+            Landmanual.地块详情.like('%' + key + '%')
+        )
+    ).paginate(page=page, per_page=20)
+    return render_template('admin/land_list.html', page_data=page_data, key=key)
+
+
+# 地块编辑
+@admin.route("/land/edit/<string:land_detail>/<string:plotnum>/", methods=["GET", "POST"])
+@admin_login_req
+def land_edit(land_detail=None, plotnum=None):
+    form = LandEditForm()
+    land = Landmanual.query.filter(
+        Landmanual.地块详情 == land_detail
+    ).first()
+
+    landpart1 = Landpart1.query.filter(
+        Landpart1.地块详情 == land_detail
+    ).first()
+
+    landpart2 = Landpart2.query.filter(
+        Landpart2.地块详情 == land_detail
+    ).first()
+
+    land_latlng = Landlatlng.query.filter(
+        Landlatlng.plotnum == plotnum
+    ).first()
+    land_latlng_count = Landlatlng.query.filter(
+        Landlatlng.plotnum == plotnum
+    ).count()
+
+    if form.validate_on_submit():
+        land.地块详情 = form.land_detail.data
+        land.总用地面积 = form.total_land_area.data
+        land.划拨面积 = form.allocated_area.data
+        land.住宅面积 = form.house_area.data
+        land.商业面积 = form.commercial_area.data
+        land.办公面积 = form.office_area.data
+        land.其他面积 = form.other_area.data
+        land.建筑密度 = form.building_density.data
+        land.建筑高度 = form.building_height.data
+        land.绿地率 = form.greening_rate.data
+        land.备注 = form.remarks.data
+
+        if land_latlng_count >= 1:
+            land_latlng.plotnum = form.plotnum.data
+            land_latlng.block_location = form.block_location.data
+            land_latlng.lng = form.lng.data
+            land_latlng.lat = form.lat.data
+        else:
+            land_latlng = Landlatlng(
+                plotnum=form.plotnum.data,
+                block_location=form.block_location.data,
+                lng=form.lng.data,
+                lat=form.lat.data
+            )
+
+        db.session.add(land)
+        db.session.commit()
+
+        db.session.add(land_latlng)
+        db.session.commit()
+
+        flash("修改成功!", "ok")
+
+        TransForm.oplog_add(o_type='edit', type='ll4', da_attr=form.land_detail.data)
+
+        redirect(url_for('admin.land_edit', land_detail=land_detail, plotnum=plotnum))
+    return render_template('admin/land_edit.html', form=form, land=land, land_latlng=land_latlng,
+                           landpart1=landpart1, landpart2=landpart2)

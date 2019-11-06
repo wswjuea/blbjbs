@@ -142,3 +142,84 @@ class Landhistsup(db.Model):
 
     def __repr__(self):
         return "<Landhistsup %r>" % self.id
+
+
+# blbj_土地网手工
+class Landmanual(db.Model):
+    __bind_key__ = "blbj_crawler"
+    __tablename__ = "blbj_土地网手工"
+    地块详情 = db.Column(db.Text, primary_key=True)
+    总用地面积 = db.Column(db.DECIMAL(20, 2))
+    划拨面积 = db.Column(db.DECIMAL(20, 2))
+    住宅面积 = db.Column(db.DECIMAL(20, 2))
+    商业面积 = db.Column(db.DECIMAL(20, 2))
+    办公面积 = db.Column(db.DECIMAL(20, 2))
+    其他面积 = db.Column(db.DECIMAL(20, 2))
+    建筑密度 = db.Column(db.DECIMAL(10, 2))
+    建筑高度 = db.Column(db.DECIMAL(10, 2))
+    绿地率 = db.Column(db.DECIMAL(10, 2))
+    备注 = db.Column(db.Text)
+
+    def __repr__(self):
+        return "<Landmanual %r>" % self.地块详情
+
+
+# blbj_土地网一层
+class Landpart1(db.Model):
+    __bind_key__ = "blbj_crawler"
+    __tablename__ = "blbj_土地网一层"
+    标题 = db.Column(db.Text)
+    地块详情 = db.Column(db.Text, primary_key=True)
+    地块名称 = db.Column(db.Text)
+    地块位置 = db.Column(db.Text)
+    土地用途 = db.Column(db.Text)
+    保证金 = db.Column(db.DECIMAL(10, 2))
+    结束时间 = db.Column(db.Date)
+    终止时间 = db.Column(db.Date)
+
+    def __repr__(self):
+        return "<Landpart1 %r>" % self.地块详情
+
+
+# blbj_土地网二层
+class Landpart2(db.Model):
+    __bind_key__ = "blbj_crawler"
+    __tablename__ = "blbj_土地网二层"
+    地块详情 = db.Column(db.Text, primary_key=True)
+    地块编号 = db.Column(db.Text)
+    拍卖开始时间 = db.Column(db.Date)
+    挂牌起始时间 = db.Column(db.Date)
+    挂牌截止时间 = db.Column(db.Date)
+    保证金到账截止时间 = db.Column(db.Date)
+    起始价 = db.Column(db.DECIMAL(15, 2))
+    竞得单位 = db.Column(db.Text)
+    成交时间 = db.Column(db.Date)
+    成交价 = db.Column(db.DECIMAL(15, 2))
+    出让面积 = db.Column(db.DECIMAL(10, 2))
+    所属行政区 = db.Column(db.Text)
+    出让年限 = db.Column(db.Text)
+    是否有底价 = db.Column(db.Text)
+    最高限价 = db.Column(db.DECIMAL(15, 2))
+    最高报价 = db.Column(db.DECIMAL(15, 2))
+    最高报价单位 = db.Column(db.Text)
+    报名开始时间 = db.Column(db.Date)
+    报名截止时间 = db.Column(db.Date)
+    竞买人条件 = db.Column(db.Text)
+    联系人 = db.Column(db.Text)
+    联系人电话 = db.Column(db.Text)
+
+    def __repr__(self):
+        return "<Landpart2 %r>" % self.地块详情
+
+
+# land_latlng
+class Landlatlng(db.Model):
+    __bind_key__ = "blbj_crawler"
+    __tablename__ = "land_latlng"
+    plotnum = db.Column(db.String(255), primary_key=True)  # 地块编号
+    block_location = db.Column(db.String(255))
+    lat = db.Column(db.DECIMAL(9, 6))
+    lng = db.Column(db.DECIMAL(9, 6))
+
+    def __repr__(self):
+        return "<Landlatlng %r>" % self.plotnum

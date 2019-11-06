@@ -351,9 +351,6 @@ class HistForm(FlaskForm):
 class HistEditForm(FlaskForm):
     presale_license_number = StringField(
         label="预售许可证号",
-        validators=[
-            DataRequired("请输入预售许可证号!")
-        ],
         description="预售许可证号",
         render_kw={
             "class": "form-control",
@@ -425,6 +422,175 @@ class HistEditForm(FlaskForm):
         render_kw={
             "class": "form-control",
             "placeholder": "请输入地块编号！"
+        }
+    )
+    submit = SubmitField(
+        label="编辑",
+        render_kw={
+            "class": "btn btn-primary"
+        }
+    )
+
+
+# 修改地块
+class LandEditForm(FlaskForm):
+    land_detail = StringField(
+        label="地块详情",
+        description="地块详情",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入地块详情！",
+            "readonly": "true"
+        }
+    )
+    plotnum = StringField(
+        label="地块编号",
+        description="地块编号",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入地块编号！",
+            "readonly": "true"
+        }
+    )
+    total_land_area = FloatField(
+        label="总用地面积",
+        validators=[
+            DataRequired("请输入总用地面积!")
+        ],
+        description="总用地面积",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入总用地面积！"
+        }
+    )
+    allocated_area = FloatField(
+        label="划拨面积",
+        validators=[
+            DataRequired("请输入划拨面积!")
+        ],
+        description="划拨面积",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入划拨面积！"
+        }
+    )
+    house_area = FloatField(
+        label="住宅面积",
+        validators=[
+            DataRequired("请输入住宅面积!")
+        ],
+        description="住宅面积",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入住宅面积！"
+        }
+    )
+    commercial_area = FloatField(
+        label="商业面积",
+        validators=[
+            DataRequired("请输入商业面积!")
+        ],
+        description="商业面积",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入商业面积！"
+        }
+    )
+    office_area = FloatField(
+        label="办公面积",
+        validators=[
+            DataRequired("请输入办公面积!")
+        ],
+        description="办公面积",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入办公面积！"
+        }
+    )
+    other_area = FloatField(
+        label="其他面积",
+        validators=[
+            DataRequired("请输入其他面积!")
+        ],
+        description="其他面积",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入其他面积！"
+        }
+    )
+    building_density = FloatField(
+        label="建筑密度",
+        validators=[
+            DataRequired("请输入建筑密度!")
+        ],
+        description="建筑密度",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入建筑密度！"
+        }
+    )
+    building_height = FloatField(
+        label="建筑高度",
+        validators=[
+            DataRequired("请输入建筑高度!")
+        ],
+        description="建筑高度",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入建筑高度！"
+        }
+    )
+    greening_rate = FloatField(
+        label="绿地率",
+        validators=[
+            DataRequired("请输入绿地率!")
+        ],
+        description="绿地率",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入绿地率！"
+        }
+    )
+    remarks = StringField(
+        label="备注",
+        validators=[
+            DataRequired("请输入备注!")
+        ],
+        description="备注",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入备注！"
+        }
+    )
+    block_location = StringField(
+        label="地块位置",
+        description="地块位置",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入地块位置！",
+            "readonly": "true"
+        }
+    )
+    lng = FloatField(
+        label="经度",
+        validators=[
+            DataRequired("请输入正确的经度!")
+        ],
+        description="经度",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入经度！"
+        }
+    )
+    lat = FloatField(
+        label="纬度",
+        validators=[
+            DataRequired("请输入正确的纬度!")
+        ],
+        description="纬度",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入纬度！"
         }
     )
     submit = SubmitField(
