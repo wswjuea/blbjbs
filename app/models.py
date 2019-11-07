@@ -36,6 +36,8 @@ class Admin(db.Model):
     __tablename__ = "admin"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True)
+    holder = db.Column(db.String(100))
+    phone = db.Column(db.String(11), unique=True)
     pwd = db.Column(db.String(100))
     is_super = db.Column(db.SmallInteger)  # 0为超级管理员
     # role_id = db.Column(db.Integer, db.ForeignKey('role.id'))

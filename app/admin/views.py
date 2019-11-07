@@ -59,7 +59,7 @@ def login():
         )
         db.session.add(adminlog)
         db.session.commit()
-        return redirect(request.args.get("next") or url_for("admin.index"))
+        return redirect(request.args.get("next") or url_for("admin.hist_list", page=1))
     return render_template("admin/login.html", form=form)
 
 
@@ -355,11 +355,20 @@ def admin_add():
         if admin_count >= 1:
             flash("管理员已存在!", "err")
             return redirect(url_for('admin.admin_add'))
+        phone_count = Admin.query.filter_by(
+            phone=data["phone"]
+        ).count()
+        if phone_count >= 1:
+            flash("该手机号已注册!", "err")
+            return redirect(url_for('admin.admin_add'))
+
         admin = Admin(
             name=data["name"],
             pwd=generate_password_hash(data["pwd"]),
             # role_id=data["role_id"],
-            is_super=1
+            is_super=1,
+            holder=data["holder"],
+            phone=data["phone"]
         )
         db.session.add(admin)
         db.session.commit()

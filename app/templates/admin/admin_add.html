@@ -41,6 +41,24 @@
                             {% endfor %}
                         </div>
                         <div class="form-group">
+                            <label for="input_name">{{ form.holder.label }}</label>
+                            {{ form.holder }}
+                            {% for err in form.holder.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="input_name">{{ form.phone.label }}</label>
+                            {{ form.phone }}
+                            {% for err in form.phone.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
                             <label for="input_pwd">{{ form.pwd.label }}</label>
                             {{ form.pwd }}
                             {% for err in form.pwd.errors %}

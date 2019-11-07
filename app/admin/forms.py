@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, FileField, TextAreaField, SelectField, SelectMultipleField, \
     DateField, FloatField
-from wtforms.validators import DataRequired, ValidationError, EqualTo, length
+from wtforms.validators import DataRequired, ValidationError, EqualTo, length, Regexp
 
 from app.models import Admin
 
@@ -82,7 +82,7 @@ class PnForm(FlaskForm):
         }
     )
     submit = SubmitField(
-        label="编辑",
+        label="确认",
         render_kw={
             "class": "btn btn-primary"
         }
@@ -92,14 +92,14 @@ class PnForm(FlaskForm):
 # 添加活动
 class ActForm(FlaskForm):
     building_promotion_name = StringField(
-        label="项目名称",
+        label="项目推广名",
         validators=[
-            DataRequired("请输入项目名称!")
+            DataRequired("请输入项目推广名!")
         ],
-        description="项目名称",
+        description="项目推广名",
         render_kw={
             "class": "form-control",
-            "placeholder": "请输入项目名称！"
+            "placeholder": "请输入项目推广名！"
         }
     )
     date = DateField(
@@ -159,7 +159,7 @@ class ActForm(FlaskForm):
         }
     )
     submit = SubmitField(
-        label="编辑",
+        label="确认",
         render_kw={
             "class": "btn btn-primary"
         }
@@ -191,7 +191,7 @@ class PwdForm(FlaskForm):
         }
     )
     submit = SubmitField(
-        label="编辑",
+        label="确认",
         render_kw={
             "class": "btn btn-primary"
         }
@@ -219,6 +219,29 @@ class AdminForm(FlaskForm):
         render_kw={
             "class": "form-control",
             "placeholder": "请输入管理员名称！"
+        }
+    )
+    holder = StringField(
+        label="持有人姓名",
+        validators=[
+            DataRequired("请输入持有人姓名!")
+        ],
+        description="持有人姓名",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入持有人姓名！"
+        }
+    )
+    phone = StringField(
+        label="手机号码",
+        validators=[
+            DataRequired("请输入手机号码!"),
+            Regexp("1[3458]\d{9}", message="手机格式不正确!")
+        ],
+        description="手机号码",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入手机号码！"
         }
     )
     pwd = PasswordField(
@@ -253,7 +276,7 @@ class AdminForm(FlaskForm):
     #     }
     # )
     submit = SubmitField(
-        label="编辑",
+        label="确认",
         render_kw={
             "class": "btn btn-primary"
         }
@@ -340,7 +363,7 @@ class HistForm(FlaskForm):
         }
     )
     submit = SubmitField(
-        label="编辑",
+        label="确认",
         render_kw={
             "class": "btn btn-primary"
         }
@@ -425,7 +448,7 @@ class HistEditForm(FlaskForm):
         }
     )
     submit = SubmitField(
-        label="编辑",
+        label="确认",
         render_kw={
             "class": "btn btn-primary"
         }
@@ -594,7 +617,7 @@ class LandEditForm(FlaskForm):
         }
     )
     submit = SubmitField(
-        label="编辑",
+        label="确认",
         render_kw={
             "class": "btn btn-primary"
         }
@@ -611,7 +634,7 @@ class PriceForm(FlaskForm):
         description="文件"
     )
     submit = SubmitField(
-        label="上传",
+        label="确认",
         render_kw={
             "class": "btn btn-primary"
         }
