@@ -23,6 +23,7 @@ app.config['SQLALCHEMY_BINDS'] = SQLAlchemy_binds_local
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 app.config["SQLALCHEMY_COMMIT_TEARDOWN"] = True
 app.config["SECRET_KEY"] = "887771752dac4713b2c4fdbe8a06d5c2"
+app.config["UP_DIR"] = os.path.join(os.path.abspath(os.path.dirname(__file__)), "files/price_files/")
 
 app.debug = True
 db = SQLAlchemy(app)

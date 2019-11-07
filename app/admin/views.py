@@ -1,13 +1,18 @@
+from werkzeug.utils import secure_filename
+
 from . import admin
 from flask import render_template, redirect, url_for, flash, session, request
-from app.admin.forms import LoginForm, PnForm, PwdForm, AdminForm, ActForm, HistForm, HistEditForm, LandEditForm
+from app.admin.forms import LoginForm, PnForm, PwdForm, AdminForm, ActForm, HistForm, HistEditForm, LandEditForm, \
+    PriceForm
 from app.models import Admin, Adminlog, Oplog, Promotion_name, Activity, User, Histworm, Histlatlng, Landhistsup, \
     Landmanual, Landpart1, Landpart2, Landlatlng
-from app import db
+from app import db, app
 from functools import wraps
 import datetime
 from app.admin.transform import TransForm
 from sqlalchemy import or_
+import os
+import uuid
 
 
 # 上下文应用处理器;转化为全局变量
@@ -698,3 +703,30 @@ def land_edit(land_detail=None, plotnum=None):
         redirect(url_for('admin.land_edit', land_detail=land_detail, plotnum=plotnum))
     return render_template('admin/land_edit.html', form=form, land=land, land_latlng=land_latlng,
                            landpart1=landpart1, landpart2=landpart2)
+
+
+# 修改上传文件名
+def change_filename(filename):
+    fileinfo = os.path.splitext(filename)
+    filename = datetime.datetime.now().strftime("%Y%m%d%H%M%S") + str(uuid.uuid4().hex) + fileinfo[-1]
+    return filename
+
+
+# 上传文件
+@admin.route("/price/add/", methods=["GET", "POST"])
+@admin_login_req
+def price_add():
+    form = PriceForm()
+    if form.validate_on_submit():
+        file = secure_filename(form.price_file.data.filename)
+        if not os.path.exists(app.config["UP_DIR"]):
+            os.makedirs(app.config["UP_DIR"])
+            os.chmod(app.config["UP_DIR"], "rw")
+
+        price_file = change_filename(file)
+        form.price_file.data.save(app.config["UP_DIR"] + price_file)
+        flash("添加文件成功!", "ok")
+
+    # TransForm.oplog_add(o_type='edit', type='price', da_attr=data["presale_license_number"])
+
+    return render_template("admin/price_add.html", form=form)

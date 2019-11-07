@@ -599,3 +599,20 @@ class LandEditForm(FlaskForm):
             "class": "btn btn-primary"
         }
     )
+
+
+# 上传到价格表
+class PriceForm(FlaskForm):
+    price_file = FileField(
+        label="文件",
+        validators=[
+            DataRequired("请上传excel文件!")
+        ],
+        description="文件"
+    )
+    submit = SubmitField(
+        label="上传",
+        render_kw={
+            "class": "btn btn-primary"
+        }
+    )

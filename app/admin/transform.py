@@ -12,7 +12,8 @@ tb_type = {
     'act': '活动',
     'user': '会员',
     'pl3': '推广名&hist_latlng&land_histsup',
-    'll4': '地块一层&二层&手工&land_latlng'
+    'll4': '地块一层&二层&手工&land_latlng',
+    'price': '一房一价'
 }
 
 
