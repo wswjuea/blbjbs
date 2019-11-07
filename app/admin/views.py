@@ -611,7 +611,7 @@ def land_list(page=None):
         Landmanual,
         Landpart1,
         Landpart2,
-        Landhistsup
+        Landlatlng
     ).outerjoin(
         Landpart1,
         Landpart1.地块详情 == Landmanual.地块详情
@@ -619,15 +619,17 @@ def land_list(page=None):
         Landpart2,
         Landpart2.地块详情 == Landmanual.地块详情
     ).outerjoin(
-        Landhistsup,
-        Landhistsup.plotnum == Landpart2.地块编号
+        Landlatlng,
+        Landlatlng.plotnum == Landpart2.地块编号
     ).group_by(
         Landmanual.地块详情
     ).filter(
         or_(
             Landpart1.标题.like('%' + key + '%'),
             Landpart2.地块编号.like('%' + key + '%'),
-            Landmanual.地块详情.like('%' + key + '%')
+            Landmanual.地块详情.like('%' + key + '%'),
+            Landlatlng.lng.like('%' + key + '%'),
+            Landlatlng.lat.like('%' + key + '%')
         )
     ).paginate(page=page, per_page=20)
     return render_template('admin/land_list.html', page_data=page_data, key=key)

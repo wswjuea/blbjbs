@@ -9,6 +9,7 @@
 
     .td_bd {
         font-weight: bold;
+        width: 40%;
     }
 </style>
 {% endblock %}
@@ -179,6 +180,92 @@
                             </div>
                             {% endfor %}
                         </div>
+                    </div>
+                    <div class="box-body table-responsive no-padding">
+                        <table class="table table-hover">
+                            <tbody>
+                            <tr>
+                                <td class="td_bd">地块名称：</td>
+                                <td>{{ landpart1.地块名称 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">土地用途：</td>
+                                <td>{{ landpart1.土地用途 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">拍卖开始时间：</td>
+                                <td>{{ landpart2.拍卖开始时间 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">挂牌起始时间：</td>
+                                <td>{{ landpart2.挂牌起始时间 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">挂牌截止时间：</td>
+                                <td>{{ landpart2.挂牌截止时间 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">保证金到账截止时间：</td>
+                                <td>{{ landpart2.保证金到账截止时间 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">起始价：</td>
+                                <td>{{ landpart2.起始价 }}万元</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">保证金：</td>
+                                <td>{{ landpart1.保证金 }}万元</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">竞得单位：</td>
+                                <td>{{ landpart2.竞得单位 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">成交时间：</td>
+                                <td>{{ landpart2.成交时间 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">成交价：</td>
+                                <td>{{ landpart2.成交价 }}万元</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">出让面积：</td>
+                                <td>{{ landpart2.出让面积 }}平方米</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">所属行政区：</td>
+                                <td>{{ landpart2.所属行政区 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">出让年限：</td>
+                                <td>{{ landpart2.出让年限 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">是否有底价：</td>
+                                <td>{{ landpart2.是否有底价 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">最高限价：</td>
+                                <td>{{ landpart2.最高限价 }}万元</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">最高报价：</td>
+                                <td>{{ landpart2.最高报价 }}万元</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">最高报价单位：</td>
+                                <td>{{ landpart2.最高报价单位 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">报名开始时间：</td>
+                                <td>{{ landpart2.报名开始时间 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="td_bd">报名截止时间：</td>
+                                <td>{{ landpart2.报名截止时间 }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                     <div class="box-footer">
                         {{ form.csrf_token }}

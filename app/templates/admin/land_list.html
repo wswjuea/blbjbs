@@ -42,6 +42,10 @@
                             <th>标题</th>
                             <th>地块编号</th>
                             <th>地块详情</th>
+                            <th>住宅面积</th>
+                            <th>商业面积</th>
+                            <th>经度</th>
+                            <th>纬度</th>
                             <th>操作事项</th>
                         </tr>
                         {% for v in page_data.items %}
@@ -49,6 +53,10 @@
                             <td>{{ v.Landpart1.标题 }}</td>
                             <td>{{ v.Landpart2.地块编号 }}</td>
                             <td>{{ v.Landmanual.地块详情 }}</td>
+                            <td>{{ v.Landmanual.住宅面积 }}</td>
+                            <td>{{ v.Landmanual.商业面积 }}</td>
+                            <td>{{ v.Landlatlng.lng }}</td>
+                            <td>{{ v.Landlatlng.lat }}</td>
                             <td>
                                 <a href="{{ url_for('admin.land_edit',land_detail=v.Landmanual.地块详情,plotnum=v.Landpart2.地块编号) }}" class="label label-success">编辑</a>
                             </td>

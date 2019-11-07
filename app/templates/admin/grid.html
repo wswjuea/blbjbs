@@ -14,25 +14,25 @@
             </li>
         </ul>
     </li>
-    <li class="treeview" id="g-2">
-        <a href="#">
-            <i class="fa fa-tags" aria-hidden="true"></i>
-            <span>楼盘推广名管理</span>
-            <span class="label label-primary pull-right">2</span>
-        </a>
-        <ul class="treeview-menu">
-            <li id="g-2-1">
-                <a href="{{ url_for('admin.pn_add') }}">
-                    <i class="fa fa-circle-o"></i> 添加推广名
-                </a>
-            </li>
-            <li id="g-2-2">
-                <a href="{{ url_for('admin.pn_list',page=1) }}">
-                    <i class="fa fa-circle-o"></i> 推广名列表
-                </a>
-            </li>
-        </ul>
-    </li>
+<!--    <li class="treeview" id="g-2">-->
+<!--        <a href="#">-->
+<!--            <i class="fa fa-tags" aria-hidden="true"></i>-->
+<!--            <span>楼盘推广名管理</span>-->
+<!--            <span class="label label-primary pull-right">2</span>-->
+<!--        </a>-->
+<!--        <ul class="treeview-menu">-->
+<!--            <li id="g-2-1">-->
+<!--                <a href="{{ url_for('admin.pn_add') }}">-->
+<!--                    <i class="fa fa-circle-o"></i> 添加推广名-->
+<!--                </a>-->
+<!--            </li>-->
+<!--            <li id="g-2-2">-->
+<!--                <a href="{{ url_for('admin.pn_list',page=1) }}">-->
+<!--                    <i class="fa fa-circle-o"></i> 推广名列表-->
+<!--                </a>-->
+<!--            </li>-->
+<!--        </ul>-->
+<!--    </li>-->
     <li class="treeview" id="g-3">
         <a href="#">
             <i class="fa fa-file-video-o" aria-hidden="true"></i>
@@ -62,6 +62,20 @@
             <li id="g-4-1">
                 <a href="{{ url_for('admin.land_list',page=1) }}">
                     <i class="fa fa-circle-o"></i> 地块列表
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="treeview" id="g-7">
+        <a href="#">
+            <i class="fa fa-heart" aria-hidden="true"></i>
+            <span>一房一价管理</span>
+            <span class="label label-primary pull-right">1</span>
+        </a>
+        <ul class="treeview-menu">
+            <li id="g-7-1">
+                <a href="">
+                    <i class="fa fa-circle-o"></i> 数据上传
                 </a>
             </li>
         </ul>
@@ -99,20 +113,6 @@
             </li>
         </ul>
     </li>
-    <li class="treeview" id="g-7">
-        <a href="#">
-            <i class="fa fa-heart" aria-hidden="true"></i>
-            <span>收藏管理</span>
-            <span class="label label-primary pull-right">1</span>
-        </a>
-        <ul class="treeview-menu">
-            <li id="g-7-1">
-                <a href="moviecol_list.html">
-                    <i class="fa fa-circle-o"></i> 收藏列表
-                </a>
-            </li>
-        </ul>
-    </li>
     <li class="treeview" id="g-8">
         <a href="#">
             <i class="fa fa-file-text" aria-hidden="true"></i>
@@ -137,44 +137,44 @@
 <!--            </li>-->
         </ul>
     </li>
-    <li class="treeview" id="g-9">
-        <a href="#">
-            <i class="fa fa-lock" aria-hidden="true"></i>
-            <span>权限管理</span>
-            <span class="label label-primary pull-right">2</span>
-        </a>
-        <ul class="treeview-menu">
-            <li id="g-9-1">
-                <a href="auth_add.html">
-                    <i class="fa fa-circle-o"></i> 添加权限
-                </a>
-            </li>
-            <li id="g-9-2">
-                <a href="auth_list.html">
-                    <i class="fa fa-circle-o"></i> 权限列表
-                </a>
-            </li>
-        </ul>
-    </li>
-    <li class="treeview" id="g-10">
-        <a href="#">
-            <i class="fa fa-user-secret" aria-hidden="true"></i>
-            <span>角色管理</span>
-            <span class="label label-primary pull-right">2</span>
-        </a>
-        <ul class="treeview-menu">
-            <li id="g-10-1">
-                <a href="role_add.html">
-                    <i class="fa fa-circle-o"></i> 添加角色
-                </a>
-            </li>
-            <li id="g-10-2">
-                <a href="role_list.html">
-                    <i class="fa fa-circle-o"></i> 角色列表
-                </a>
-            </li>
-        </ul>
-    </li>
+<!--    <li class="treeview" id="g-9">-->
+<!--        <a href="#">-->
+<!--            <i class="fa fa-lock" aria-hidden="true"></i>-->
+<!--            <span>权限管理</span>-->
+<!--            <span class="label label-primary pull-right">2</span>-->
+<!--        </a>-->
+<!--        <ul class="treeview-menu">-->
+<!--            <li id="g-9-1">-->
+<!--                <a href="auth_add.html">-->
+<!--                    <i class="fa fa-circle-o"></i> 添加权限-->
+<!--                </a>-->
+<!--            </li>-->
+<!--            <li id="g-9-2">-->
+<!--                <a href="auth_list.html">-->
+<!--                    <i class="fa fa-circle-o"></i> 权限列表-->
+<!--                </a>-->
+<!--            </li>-->
+<!--        </ul>-->
+<!--    </li>-->
+<!--    <li class="treeview" id="g-10">-->
+<!--        <a href="#">-->
+<!--            <i class="fa fa-user-secret" aria-hidden="true"></i>-->
+<!--            <span>角色管理</span>-->
+<!--            <span class="label label-primary pull-right">2</span>-->
+<!--        </a>-->
+<!--        <ul class="treeview-menu">-->
+<!--            <li id="g-10-1">-->
+<!--                <a href="role_add.html">-->
+<!--                    <i class="fa fa-circle-o"></i> 添加角色-->
+<!--                </a>-->
+<!--            </li>-->
+<!--            <li id="g-10-2">-->
+<!--                <a href="role_list.html">-->
+<!--                    <i class="fa fa-circle-o"></i> 角色列表-->
+<!--                </a>-->
+<!--            </li>-->
+<!--        </ul>-->
+<!--    </li>-->
     <li class="treeview" id="g-11">
         <a href="#">
             <i class="fa fa-user-circle" aria-hidden="true"></i>
