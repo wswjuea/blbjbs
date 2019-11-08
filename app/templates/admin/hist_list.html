@@ -1,6 +1,31 @@
 {% extends "admin/admin.html" %}
 {% import "ui/admin_page.html" as pg%}
 
+{% block css %}
+<style>
+    .arrow {
+        display: inline-block;
+        vertical-align: middle;
+        width: 0;
+        height: 0;
+        margin-left: 5px;
+        opacity: 0.66;
+    }
+
+    .arrow.asc {
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-bottom: 4px solid #000;
+    }
+
+    .arrow.dsc {
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-top: 4px solid #000;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <section class="content-header">
     <h1>数据管理系统</h1>
@@ -39,7 +64,7 @@
                     <table class="table table-hover">
                         <tbody>
                         <tr>
-                            <th>编号</th>
+                            <th>编号</th> <!--<span class="arrow asc" id="1"></span>-->
                             <th>预售许可证号</th>
                             <th>项目备案名</th>
                             <th>项目推广名</th>
@@ -62,7 +87,7 @@
                             <td>
                                 <a href="{{ url_for('admin.hist_edit',id=v.Promotion_name.id,presale_license_number=v.Promotion_name.预售许可证号) }}" class="label label-success">编辑</a>
                                 &nbsp;
-<!--                                <a href="{{ url_for('admin.hist_del',id=v.Promotion_name.id,presale_license_number=v.Promotion_name.预售许可证号) }}" class="label label-danger">删除</a>-->
+                                <!--                                <a href="{{ url_for('admin.hist_del',id=v.Promotion_name.id,presale_license_number=v.Promotion_name.预售许可证号) }}" class="label label-danger">删除</a>-->
                             </td>
                         </tr>
                         {% endfor %}
@@ -87,6 +112,21 @@
             var key = $("#key_hist").val();
             location.href = "{{ url_for('admin.hist_list',page=1) }}?key=" + key;
         });
+        // var ad = '';
+        // $(".arrow").click(function () {
+        //      if($('span').is('.asc')){
+        //          $(".arrow").addClass("dsc");
+        //          $(".arrow").removeClass("asc");
+        //          ad = '1'
+        //      }else {
+        //          $(".arrow").addClass("asc");
+        //          $(".arrow").removeClass("dsc");
+        //          ad = '0'
+        //      }
+        //      var key = $("#key_hist").val();
+        //      var col = $(".arrow").attr('id');
+        //      location.href = "{{ url_for('admin.hist_list',page=1) }}?key=" + key + "&ad=" + ad + "&col=" +col;
+        // });
     });
 
 </script>

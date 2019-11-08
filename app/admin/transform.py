@@ -1,6 +1,9 @@
 from flask import session, request
+from sqlalchemy import desc, asc
+
 from app.models import Oplog
 from app import db
+from app.models import Promotion_name, Histlatlng, Landhistsup
 
 op_type = {
     'add': '添加',
@@ -16,6 +19,22 @@ tb_type = {
     'price': '一房一价'
 }
 
+# order_ad = {
+#     '1': "desc",
+#     '0': "asc"
+# }
+#
+# hist_col = {
+#     '1': Promotion_name.id,
+#     '2': Promotion_name.预售许可证号,
+#     '3': Promotion_name.项目备案名,
+#     '4': Promotion_name.项目推广名,
+#     '5': Histlatlng.building_address,
+#     '6': Histlatlng.lng,
+#     '7': Histlatlng.lat,
+#     '8': Landhistsup.plotnum
+# }
+
 
 class TransForm:
     @classmethod
@@ -28,3 +47,12 @@ class TransForm:
         db.session.add(oplog)
         db.session.commit()
         return None
+
+
+# class HistOrd:
+#     @classmethod
+#     def histord(cls, ad='1', col='1'):
+#         if order_ad[ad] == "desc":
+#             return desc(hist_col[col])
+#         else:
+#             return asc(hist_col[col])

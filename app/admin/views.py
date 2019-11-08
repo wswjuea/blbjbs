@@ -13,6 +13,8 @@ from app.admin.transform import TransForm
 from sqlalchemy import or_
 import os
 import uuid
+import pandas as pd
+import sqlalchemy
 
 
 # 上下文应用处理器;转化为全局变量
@@ -728,14 +730,43 @@ def price_add():
     form = PriceForm()
     if form.validate_on_submit():
         file = secure_filename(form.price_file.data.filename)
+        if file == 'xlsx':
+            file = 'jiage.xlsx'
+
         if not os.path.exists(app.config["UP_DIR"]):
             os.makedirs(app.config["UP_DIR"])
             os.chmod(app.config["UP_DIR"], "rw")
 
         price_file = change_filename(file)
         form.price_file.data.save(app.config["UP_DIR"] + price_file)
+
+        path = os.path.abspath(app.config["UP_DIR"] + price_file)
+        data = pd.DataFrame(pd.read_excel(path))
+        # data = data.astype(object).where(pd.notnull(data), None)
+        engine = sqlalchemy.create_engine(
+            'mysql+pymysql://root:Blbj123456@rm-bp16nmlmn159wru4reo.mysql.rds.aliyuncs.com:3306/blbj_crawler?charset=utf8')
+        data.to_sql('价格', con=engine, if_exists='append',
+                    index=False,
+                    dtype={
+                        "开发单位": sqlalchemy.types.VARCHAR(255),
+                        "预售许可证": sqlalchemy.types.VARCHAR(255),
+                        "项目名称": sqlalchemy.types.VARCHAR(255),
+                        "幢号": sqlalchemy.types.VARCHAR(255),
+                        "室号": sqlalchemy.types.VARCHAR(255),
+                        "层高（m）": sqlalchemy.types.VARCHAR(255),
+                        "户型": sqlalchemy.types.VARCHAR(255),
+                        "建筑面积（㎡）": sqlalchemy.types.DECIMAL(10, 2),
+                        "套内建筑面积（㎡）": sqlalchemy.types.DECIMAL(10, 2),
+                        "公摊建筑面积（㎡）": sqlalchemy.types.DECIMAL(10, 2),
+                        "计价单位": sqlalchemy.types.VARCHAR(255),
+                        "毛坯销售单价（元/㎡）": sqlalchemy.types.DECIMAL(11, 2),
+                        "毛坯销售房屋总价（元）": sqlalchemy.types.DECIMAL(11, 2),
+                        "备注": sqlalchemy.types.VARCHAR(255),
+                        "备注2": sqlalchemy.types.VARCHAR(255)
+                    })
+
         flash("添加文件成功!", "ok")
 
-    # TransForm.oplog_add(o_type='edit', type='price', da_attr=data["presale_license_number"])
+    # TransForm.oplog_add(o_type='add', type='price', da_attr=path)
 
     return render_template("admin/price_add.html", form=form)
