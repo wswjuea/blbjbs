@@ -742,11 +742,11 @@ def price_add():
 
         path = os.path.abspath(app.config["UP_DIR"] + price_file)
         data = pd.DataFrame(pd.read_excel(path))
-        # data = data.astype(object).where(pd.notnull(data), None)
+
         engine = sqlalchemy.create_engine(
             'mysql+pymysql://root:Blbj123456@rm-bp16nmlmn159wru4reo.mysql.rds.aliyuncs.com:3306/blbj_crawler?charset=utf8')
         data.to_sql('价格', con=engine, if_exists='append',
-                    index=False,
+                    index=False, index_label=False,
                     dtype={
                         "开发单位": sqlalchemy.types.VARCHAR(255),
                         "预售许可证": sqlalchemy.types.VARCHAR(255),
@@ -764,9 +764,10 @@ def price_add():
                         "备注": sqlalchemy.types.VARCHAR(255),
                         "备注2": sqlalchemy.types.VARCHAR(255)
                     })
+        engine.dispose()
 
         flash("添加文件成功!", "ok")
 
-    # TransForm.oplog_add(o_type='add', type='price', da_attr=path)
+        TransForm.oplog_add(o_type='add', type='price', da_attr=price_file)
 
     return render_template("admin/price_add.html", form=form)
