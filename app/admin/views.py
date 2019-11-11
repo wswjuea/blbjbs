@@ -1,7 +1,7 @@
 from werkzeug.utils import secure_filename
 
 from . import admin
-from flask import render_template, redirect, url_for, flash, session, request
+from flask import render_template, redirect, url_for, flash, session, request, send_from_directory
 from app.admin.forms import LoginForm, PnForm, PwdForm, AdminForm, ActForm, HistForm, HistEditForm, LandEditForm, \
     PriceForm
 from app.models import Admin, Adminlog, Oplog, Promotion_name, Activity, User, Histworm, Histlatlng, Landhistsup, \
@@ -771,3 +771,12 @@ def price_add():
         TransForm.oplog_add(o_type='add', type='price', da_attr=price_file)
 
     return render_template("admin/price_add.html", form=form)
+
+
+# 下载文件
+@admin.route("/price/dn/")
+@admin_login_req
+def price_dn():
+    path = os.path.abspath(app.config["UP_DIR"])
+    return send_from_directory(directory=path, filename="jiage.xlsx",
+                               as_attachment=True)
