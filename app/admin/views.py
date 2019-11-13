@@ -3,14 +3,14 @@ from werkzeug.utils import secure_filename
 from . import admin
 from flask import render_template, redirect, url_for, flash, session, request, send_from_directory
 from app.admin.forms import LoginForm, PnForm, PwdForm, AdminForm, ActForm, HistForm, HistEditForm, LandEditForm, \
-    PriceForm
+    PriceForm, PriceeditForm
 from app.models import Admin, Adminlog, Oplog, Promotion_name, Activity, User, Histworm, Histlatlng, Landhistsup, \
-    Landmanual, Landpart1, Landpart2, Landlatlng
+    Landmanual, Landpart1, Landpart2, Landlatlng, Price
 from app import db, app
 from functools import wraps
 import datetime
 from app.admin.transform import TransForm
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 import os
 import uuid
 import pandas as pd
@@ -753,14 +753,14 @@ def price_add():
                         "项目名称": sqlalchemy.types.VARCHAR(255),
                         "幢号": sqlalchemy.types.VARCHAR(255),
                         "室号": sqlalchemy.types.VARCHAR(255),
-                        "层高（m）": sqlalchemy.types.VARCHAR(255),
+                        "层高": sqlalchemy.types.VARCHAR(255),
                         "户型": sqlalchemy.types.VARCHAR(255),
-                        "建筑面积（㎡）": sqlalchemy.types.DECIMAL(10, 2),
-                        "套内建筑面积（㎡）": sqlalchemy.types.DECIMAL(10, 2),
-                        "公摊建筑面积（㎡）": sqlalchemy.types.DECIMAL(10, 2),
+                        "建筑面积": sqlalchemy.types.DECIMAL(10, 2),
+                        "套内建筑面积": sqlalchemy.types.DECIMAL(10, 2),
+                        "公摊建筑面积": sqlalchemy.types.DECIMAL(10, 2),
                         "计价单位": sqlalchemy.types.VARCHAR(255),
-                        "毛坯销售单价（元/㎡）": sqlalchemy.types.DECIMAL(11, 2),
-                        "毛坯销售房屋总价（元）": sqlalchemy.types.DECIMAL(11, 2),
+                        "毛坯销售单价": sqlalchemy.types.DECIMAL(11, 2),
+                        "毛坯销售房屋总价": sqlalchemy.types.DECIMAL(11, 2),
                         "备注": sqlalchemy.types.VARCHAR(255),
                         "备注2": sqlalchemy.types.VARCHAR(255)
                     })
@@ -778,5 +778,89 @@ def price_add():
 @admin_login_req
 def price_dn():
     path = os.path.abspath(app.config["UP_DIR"])
-    return send_from_directory(directory=path, filename="jiage.xlsx",
+    return send_from_directory(directory=path, filename="price.xlsx",
                                as_attachment=True)
+
+
+# 价格列表
+@admin.route("/price/list/<int:page>/", methods=["GET"])
+@admin_login_req
+def price_list(page=None):
+    if page is None:
+        page = 1
+    key = request.args.get("key", "")
+    page_data = Price.query.filter(
+        Price.id > 405726,
+        or_(
+            Price.预售许可证.like('%' + key + '%'),
+            Price.项目名称.like('%' + key + '%'),
+            Price.幢号.like('%' + key + '%'),
+            Price.室号.like('%' + key + '%')
+        )
+    ).order_by(
+        Price.id.desc()
+    ).paginate(page=page, per_page=20)
+    return render_template("admin/price_list.html", key=key, page_data=page_data)
+
+
+# 价格删除
+@admin.route("/price/del/<int:id>/", methods=["GET"])
+@admin_login_req
+def price_del(id=None):
+    price = Price.query.filter_by(id=id).first_or_404()
+    db.session.delete(price)
+    db.session.commit()
+    flash("删除一房一价成功!", "ok")
+
+    TransForm.oplog_add(o_type='del', type='price', da_attr=price.预售许可证 + price.幢号 + price.室号)
+
+    return redirect(url_for('admin.price_list', page=1))
+
+
+# 价格编辑
+@admin.route("/price/edit/<int:id>/", methods=["GET", "POST"])
+@admin_login_req
+def price_edit(id=None):
+    form = PriceeditForm()
+    price = Price.query.get_or_404(id)
+    if form.validate_on_submit():
+        data = form.data
+        price_count = Price.query.filter(
+            and_(
+                Price.预售许可证 == data["presale_license_number"],
+                Price.幢号 == data["bn"],
+                Price.室号 == data["rn"]
+            )
+        ).count()
+        if price.预售许可证 != data["presale_license_number"] or \
+                price.幢号 != data["bn"] or \
+                price.室号 != data["rn"] and \
+                price_count >= 1:  # 判断和标签是否重复
+            flash("一房一价已存在!", "err")
+            return redirect(url_for('admin.price_edit', id=id))
+
+        price.开发单位 = data["dn"]
+        price.预售许可证 = data["presale_license_number"]
+        price.项目名称 = data["building_name"]
+        price.幢号 = data["bn"]
+        price.室号 = data["rn"]
+        price.层高 = data["sh"]
+        price.户型 = data["apartment"]
+        price.建筑面积 = data["area"]
+        price.套内建筑面积 = data["biarea"]
+        price.公摊建筑面积 = data["sbarea"]
+        price.计价单位 = data["valn"]
+        price.毛坯销售单价 = data["room_price"]
+        price.毛坯销售房屋总价 = data["room_total_price"]
+        price.备注 = data["remark"]
+        price.备注2 = data["remark2"]
+
+        db.session.add(price)
+        db.session.commit()
+        flash("修改一房一价成功!", "ok")
+
+        TransForm.oplog_add(o_type='edit', type='price',
+                            da_attr=data["presale_license_number"] + data["bn"] + data["rn"])
+
+        redirect(url_for('admin.price_edit', id=id))
+    return render_template('admin/price_edit.html', form=form, price=price)

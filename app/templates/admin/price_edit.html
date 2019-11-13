@@ -1,0 +1,188 @@
+{% extends "admin/admin.html" %}
+
+{% block content %}
+<section class="content-header">
+    <h1>数据管理系统</h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> 一房一价管理</a></li>
+        <li class="active">修改一房一价</li>
+    </ol>
+</section>
+<section class="content" id="showcontent">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">修改一房一价</h3>
+                </div>
+                <form role="form" method="post" novalidate>
+                    <div class="box-body">
+                        {% for msg in get_flashed_messages(category_filter=["ok"]) %}
+                        <div class="alert alert-success alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <h4><i class="icon fa fa-check"></i> 操作成功 </h4>
+                            {{ msg }}
+                        </div>
+                        {% endfor %}
+                        {% for msg in get_flashed_messages(category_filter=["err"]) %}
+                        <div class="alert alert-danger alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <h4><i class="icon fa fa-ban"></i> 操作失败 </h4>
+                            {{ msg }}
+                        </div>
+                        {% endfor %}
+                        <div class="form-group">
+                            <label>{{ form.dn.label }}</label>
+                            {{ form.dn(value=price.开发单位) }}
+                            {% for err in form.dn.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.presale_license_number.label }}</label>
+                            {{ form.presale_license_number(value=price.预售许可证) }}
+                            {% for err in form.presale_license_number.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.building_name.label }}</label>
+                            {{ form.building_name(value=price.项目名称) }}
+                            {% for err in form.building_name.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.bn.label }}</label>
+                            {{ form.bn(value=price.幢号) }}
+                            {% for err in form.bn.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.rn.label }}</label>
+                            {{ form.rn(value=price.室号) }}
+                            {% for err in form.rn.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.sh.label }}</label>
+                            {{ form.sh(value=price.层高) }}
+                            {% for err in form.sh.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.apartment.label }}</label>
+                            {{ form.apartment(value=price.户型) }}
+                            {% for err in form.apartment.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.area.label }}</label>
+                            {{ form.area(value=price.建筑面积) }}
+                            {% for err in form.area.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.biarea.label }}</label>
+                            {{ form.biarea(value=price.套内建筑面积) }}
+                            {% for err in form.biarea.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.sbarea.label }}</label>
+                            {{ form.sbarea(value=price.公摊建筑面积) }}
+                            {% for err in form.sbarea.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.valn.label }}</label>
+                            {{ form.valn(value=price.计价单位) }}
+                            {% for err in form.valn.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.room_price.label }}</label>
+                            {{ form.room_price(value=price.毛坯销售单价) }}
+                            {% for err in form.room_price.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.room_total_price.label }}</label>
+                            {{ form.room_total_price(value=price.毛坯销售房屋总价) }}
+                            {% for err in form.room_total_price.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.remark.label }}</label>
+                            {{ form.remark(value=price.备注) }}
+                            {% for err in form.remark.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.remark2.label }}</label>
+                            {{ form.remark2(value=price.备注2) }}
+                            {% for err in form.remark2.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        {{ form.csrf_token }}
+                        {{ form.submit }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script>
+    $(document).ready(function () {
+        $("#g-7").addClass("active");
+        $("#g-7-2").addClass("active");
+    });
+</script>
+{% endblock %}

@@ -639,3 +639,166 @@ class PriceForm(FlaskForm):
             "class": "btn btn-primary"
         }
     )
+
+
+# 编辑价格
+class PriceeditForm(FlaskForm):
+    dn = StringField(
+        label="开发单位",
+        validators=[
+            DataRequired("请输入开发单位!")
+        ],
+        description="开发单位",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入开发单位！"
+        }
+    )
+    presale_license_number = StringField(
+        label="预售许可证号",
+        validators=[
+            DataRequired("请输入预售许可证号!")
+        ],
+        description="预售许可证号",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入预售许可证号！"
+        }
+    )
+    building_name = StringField(
+        label="项目备案名",
+        validators=[
+            DataRequired("请输入项目备案名!")
+        ],
+        description="项目备案名",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入项目备案名！"
+        }
+    )
+    bn = StringField(
+        label="幢号",
+        validators=[
+            DataRequired("请输入幢号!")
+        ],
+        description="幢号",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入幢号！"
+        }
+    )
+    rn = StringField(
+        label="室号",
+        validators=[
+            DataRequired("请输入室号!")
+        ],
+        description="室号",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入室号！"
+        }
+    )
+    sh = StringField(
+        label="层高",
+        description="层高",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入层高！"
+        }
+    )
+    apartment = StringField(
+        label="户型",
+        description="户型",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入户型！"
+        }
+    )
+    area = FloatField(
+        label="建筑面积",
+        validators=[
+            DataRequired("请输入建筑面积!")
+        ],
+        description="建筑面积",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入建筑面积！"
+        }
+    )
+    biarea = FloatField(
+        label="套内建筑面积",
+        validators=[
+            DataRequired("请输入套内建筑面积!")
+        ],
+        description="套内建筑面积",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入套内建筑面积！"
+        }
+    )
+    sbarea = FloatField(
+        label="公摊建筑面积",
+        validators=[
+            DataRequired("请输入公摊建筑面积!")
+        ],
+        description="公摊建筑面积",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入公摊建筑面积！"
+        }
+    )
+    valn = StringField(
+        label="计价单位",
+        description="计价单位",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入计价单位！"
+        }
+    )
+    room_price = FloatField(
+        label="毛坯销售单价",
+        validators=[
+            DataRequired("请输入毛坯销售单价!")
+        ],
+        description="毛坯销售单价",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入毛坯销售单价！"
+        }
+    )
+    room_total_price = FloatField(
+        label="毛坯销售房屋总价",
+        validators=[
+            DataRequired("请输入毛坯销售房屋总价!")
+        ],
+        description="毛坯销售房屋总价",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入毛坯销售房屋总价！"
+        }
+    )
+    remark = StringField(
+        label="备注",
+        validators=[
+            DataRequired("请输入备注!")
+        ],
+        description="备注",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入备注！"
+        }
+    )
+    remark2 = StringField(
+        label="备注2",
+        description="备注2",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入备注2！"
+        }
+    )
+    submit = SubmitField(
+        label="确认",
+        render_kw={
+            "class": "btn btn-primary"
+        }
+    )

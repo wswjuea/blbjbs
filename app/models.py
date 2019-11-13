@@ -225,3 +225,29 @@ class Landlatlng(db.Model):
 
     def __repr__(self):
         return "<Landlatlng %r>" % self.plotnum
+
+
+# 价格
+class Price(db.Model):
+    __bind_key__ = "blbj_crawler"
+    __tablename__ = "价格"
+    id = db.Column(db.Integer, primary_key=True)
+    开发单位 = db.Column(db.String(255))
+    预售许可证 = db.Column(db.String(255))
+    项目名称 = db.Column(db.String(255))
+    幢号 = db.Column(db.String(255))
+    室号 = db.Column(db.String(255))
+    层高 = db.Column(db.String(255))
+    户型 = db.Column(db.String(255))
+    建筑面积 = db.Column(db.DECIMAL(10, 2))
+    套内建筑面积 = db.Column(db.DECIMAL(10, 2))
+    公摊建筑面积 = db.Column(db.DECIMAL(10, 2))
+    计价单位 = db.Column(db.String(255))
+    毛坯销售单价 = db.Column(db.DECIMAL(11, 2))
+    毛坯销售房屋总价 = db.Column(db.DECIMAL(11, 2))
+    备注 = db.Column(db.String(255))
+    备注2 = db.Column(db.String(255))
+
+    def __repr__(self):
+        return "<Price %r>" % self.id
+
