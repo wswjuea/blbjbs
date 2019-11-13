@@ -19,21 +19,21 @@ tb_type = {
     'price': '一房一价'
 }
 
-# order_ad = {
-#     '1': "desc",
-#     '0': "asc"
-# }
-#
-# hist_col = {
-#     '1': Promotion_name.id,
-#     '2': Promotion_name.预售许可证号,
-#     '3': Promotion_name.项目备案名,
-#     '4': Promotion_name.项目推广名,
-#     '5': Histlatlng.building_address,
-#     '6': Histlatlng.lng,
-#     '7': Histlatlng.lat,
-#     '8': Landhistsup.plotnum
-# }
+order_ad = {
+    '1': "desc",
+    '0': "asc"
+}
+
+hist_col = {
+    '1': Promotion_name.id,
+    '2': Promotion_name.预售许可证号,
+    '3': Promotion_name.项目备案名,
+    '4': Promotion_name.项目推广名,
+    '5': Histlatlng.building_address,
+    '6': Histlatlng.lng,
+    '7': Histlatlng.lat,
+    '8': Landhistsup.plotnum
+}
 
 
 class TransForm:
@@ -49,10 +49,10 @@ class TransForm:
         return None
 
 
-# class HistOrd:
-#     @classmethod
-#     def histord(cls, ad='1', col='1'):
-#         if order_ad[ad] == "desc":
-#             return desc(hist_col[col])
-#         else:
-#             return asc(hist_col[col])
+class HistOrd:
+    @classmethod
+    def histord(cls, ad, col):
+        if order_ad[ad] == "desc":
+            return desc(hist_col[col])
+        else:
+            return asc(hist_col[col])

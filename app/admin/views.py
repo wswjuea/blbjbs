@@ -9,7 +9,7 @@ from app.models import Admin, Adminlog, Oplog, Promotion_name, Activity, User, H
 from app import db, app
 from functools import wraps
 import datetime
-from app.admin.transform import TransForm
+from app.admin.transform import TransForm, HistOrd
 from sqlalchemy import or_, and_
 import os
 import uuid
@@ -439,7 +439,11 @@ def user_del(id=None):
 def hist_list(page=None):
     if page is None:
         page = 1
+
     key = request.args.get("key", "")
+    ad = request.args.get("ad", "1")
+    col = request.args.get("col", "1")
+
     page_data = db.session.query(
         Promotion_name,
         Histlatlng,
@@ -460,6 +464,7 @@ def hist_list(page=None):
         )
     ).order_by(
         Promotion_name.id.desc()
+        # HistOrd.histord(ad=ad, col=col)
     ).paginate(page=page, per_page=20)
     return render_template('admin/hist_list.html', page_data=page_data, key=key)
 

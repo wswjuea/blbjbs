@@ -18,7 +18,7 @@
         border-bottom: 4px solid #000;
     }
 
-    .arrow.dsc {
+    .arrow.desc {
         border-left: 4px solid transparent;
         border-right: 4px solid transparent;
         border-top: 4px solid #000;
@@ -64,14 +64,14 @@
                     <table class="table table-hover">
                         <tbody>
                         <tr>
-                            <th>编号</th> <!--<span class="arrow asc" id="1"></span>-->
-                            <th>预售许可证号</th>
-                            <th>项目备案名</th>
-                            <th>项目推广名</th>
-                            <th>项目地址</th>
-                            <th>经度</th>
-                            <th>纬度</th>
-                            <th>地块编号</th>
+                            <th>编号<span class="arrow desc" id="1"></span></th>
+                            <th>预售许可证号<span class="arrow desc" id="2"></span></th>
+                            <th>项目备案名<span class="arrow desc" id="3"></span></th>
+                            <th>项目推广名<span class="arrow desc" id="4"></span></th>
+                            <th>项目地址<span class="arrow desc" id="5"></span></th>
+                            <th>经度<span class="arrow desc" id="6"></span></th>
+                            <th>纬度<span class="arrow desc" id="7"></span></th>
+                            <th>地块编号<span class="arrow desc" id="8"></span></th>
                             <th>操作事项</th>
                         </tr>
                         {% for v in page_data.items %}
@@ -85,7 +85,8 @@
                             <td>{{ v.Histlatlng.lat }}</td>
                             <td>{{ v.Landhistsup.plotnum }}</td>
                             <td>
-                                <a href="{{ url_for('admin.hist_edit',id=v.Promotion_name.id,presale_license_number=v.Promotion_name.预售许可证号) }}" class="label label-success">编辑</a>
+                                <a href="{{ url_for('admin.hist_edit',id=v.Promotion_name.id,presale_license_number=v.Promotion_name.预售许可证号) }}"
+                                   class="label label-success">编辑</a>
                                 &nbsp;
                                 <!--                                <a href="{{ url_for('admin.hist_del',id=v.Promotion_name.id,presale_license_number=v.Promotion_name.预售许可证号) }}" class="label label-danger">删除</a>-->
                             </td>
@@ -112,21 +113,27 @@
             var key = $("#key_hist").val();
             location.href = "{{ url_for('admin.hist_list',page=1) }}?key=" + key;
         });
-        // var ad = '';
-        // $(".arrow").click(function () {
-        //      if($('span').is('.asc')){
-        //          $(".arrow").addClass("dsc");
-        //          $(".arrow").removeClass("asc");
-        //          ad = '1'
-        //      }else {
-        //          $(".arrow").addClass("asc");
-        //          $(".arrow").removeClass("dsc");
-        //          ad = '0'
-        //      }
-        //      var key = $("#key_hist").val();
-        //      var col = $(".arrow").attr('id');
-        //      location.href = "{{ url_for('admin.hist_list',page=1) }}?key=" + key + "&ad=" + ad + "&col=" +col;
-        // });
+        var ad = '';
+        $(".arrow").click(function () {
+            if ($(this).is('.desc')) {
+                $(this).addClass("asc");
+                $(this).removeClass("desc");
+                // var ad = '0'
+            } else {
+                $(this).addClass("desc");
+                $(this).removeClass("asc");
+                // var ad = '1'
+            }
+            // var key = $("#key_hist").val();
+            var col = $(this).attr('id');
+            if ($(this).is(".desc")) {
+                ad = '1'
+            }else {
+                ad = '0'
+            }
+            location.href = "{{ url_for('admin.hist_list',page=1) }}?key=" + key + "&ad=" + ad + "&col=" +col;
+            // location.href = "{{ url_for('admin.hist_list',page=1) }}?ad=" + ad + "&col=" + col;
+        });
     });
 
 </script>
