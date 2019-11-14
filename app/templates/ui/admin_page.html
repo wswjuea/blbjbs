@@ -1,8 +1,8 @@
-{% macro page(data,url,key) %}
+{% macro page(data,url,key,ad,col) %}
 <ul class="pagination pagination-sm no-margin pull-right">
     <li
             {% if not data.has_prev %} class="disabled" {% endif %}>
-        <a href="{% if data.has_prev %}{{ url_for(url,page = data.page - 1,key=key) }}
+        <a href="{% if data.has_prev %}{{ url_for(url,page = data.page - 1,key=key,ad=ad,col=col) }}
             {% else %}#{% endif %}">&laquo;
         </a>
     </li>
@@ -10,11 +10,11 @@
     {% if p %}
     {% if p == data.page %}
     <li class="active">
-        <a href="{{ url_for(url, page = p,key=key) }}">{{ p }}</a>
+        <a href="{{ url_for(url, page = p,key=key,ad=ad,col=col) }}">{{ p }}</a>
     </li>
     {% else %}
     <li>
-        <a href="{{ url_for(url, page = p,key=key) }}">{{ p }}</a>
+        <a href="{{ url_for(url, page = p,key=key,ad=ad,col=col) }}">{{ p }}</a>
     </li>
     {% endif %}
     {% else %}
@@ -25,7 +25,7 @@
     {% endfor %}
     <li
             {% if not data.has_next %} class="disabled" {% endif %}>
-        <a href="{% if data.has_next %}{{ url_for(url,page = data.page + 1,key=key) }}{% else %}#{% endif %}">&raquo;</a>
+        <a href="{% if data.has_next %}{{ url_for(url,page = data.page + 1,key=key,ad=ad,col=col) }}{% else %}#{% endif %}">&raquo;</a>
     </li>
 </ul>
 {% endmacro %}

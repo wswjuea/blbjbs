@@ -9,7 +9,7 @@ from app.models import Admin, Adminlog, Oplog, Promotion_name, Activity, User, H
 from app import db, app
 from functools import wraps
 import datetime
-from app.admin.transform import TransForm, HistOrd
+from app.admin.transform import TransForm, HistOrd, LandOrd
 from sqlalchemy import or_, and_
 import os
 import uuid
@@ -463,10 +463,10 @@ def hist_list(page=None):
             Landhistsup.plotnum.like('%' + key + '%')
         )
     ).order_by(
-        Promotion_name.id.desc()
-        # HistOrd.histord(ad=ad, col=col)
+        # Promotion_name.id.desc()
+        HistOrd.histord(ad=ad, col=col)
     ).paginate(page=page, per_page=20)
-    return render_template('admin/hist_list.html', page_data=page_data, key=key)
+    return render_template('admin/hist_list.html', page_data=page_data, key=key, ad=ad, col=col)
 
 
 # 添加楼盘
@@ -628,6 +628,9 @@ def land_list(page=None):
     if page is None:
         page = 1
     key = request.args.get("key", "")
+    ad = request.args.get("ad", "1")
+    col = request.args.get("col", "1")
+
     page_data = db.session.query(
         Landmanual,
         Landpart1,
@@ -652,8 +655,10 @@ def land_list(page=None):
             Landlatlng.lng.like('%' + key + '%'),
             Landlatlng.lat.like('%' + key + '%')
         )
+    ).order_by(
+        LandOrd.landord(ad=ad, col=col)
     ).paginate(page=page, per_page=20)
-    return render_template('admin/land_list.html', page_data=page_data, key=key)
+    return render_template('admin/land_list.html', page_data=page_data, key=key, ad=ad, col=col)
 
 
 # 地块编辑

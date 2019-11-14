@@ -3,7 +3,7 @@ from sqlalchemy import desc, asc
 
 from app.models import Oplog
 from app import db
-from app.models import Promotion_name, Histlatlng, Landhistsup
+from app.models import Promotion_name, Histlatlng, Landhistsup, Landpart1, Landpart2, Landmanual, Landlatlng
 
 op_type = {
     'add': '添加',
@@ -35,6 +35,16 @@ hist_col = {
     '8': Landhistsup.plotnum
 }
 
+land_col = {
+    '1': Landpart1.标题,
+    '2': Landpart2.地块编号,
+    '3': Landmanual.地块详情,
+    '4': Landmanual.住宅面积,
+    '5': Landmanual.商业面积,
+    '6': Landlatlng.lng,
+    '7': Landlatlng.lat
+}
+
 
 class TransForm:
     @classmethod
@@ -56,3 +66,12 @@ class HistOrd:
             return desc(hist_col[col])
         else:
             return asc(hist_col[col])
+
+
+class LandOrd:
+    @classmethod
+    def landord(cls, ad, col):
+        if order_ad[ad] == "desc":
+            return desc(land_col[col])
+        else:
+            return asc(land_col[col])
