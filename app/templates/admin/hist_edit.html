@@ -28,7 +28,7 @@
                 <div class="box-header with-border">
                     <h3 class="box-title">修改楼盘</h3>
                 </div>
-                <form role="form" method="post" novalidate>
+                <form role="form" method="post" novalidate enctype="multipart/form-data">
                     <div class="box-body">
                         {% for msg in get_flashed_messages(category_filter=["ok"]) %}
                         <div class="alert alert-success alert-dismissible">
@@ -107,10 +107,86 @@
                             </div>
                             {% endfor %}
                         </div>
+                        <div class="form-group">
+                            <label for="input_activity_time">{{ form.completion_date.label }}</label>
+                            {{ form.completion_date(value=histworm.交付时间) }}
+                            {% for err in form.completion_date.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="input_name">{{ form.prop_man_comp.label }}</label>
+                            {{ form.prop_man_comp(value=histworm.物业公司) }}
+                            {% for err in form.prop_man_comp.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="input_name">{{ form.floor_area.label }}</label>
+                            {{ form.floor_area(value=histworm.占地面积) }}
+                            {% for err in form.floor_area.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="input_name">{{ form.total_building_volume.label }}</label>
+                            {{ form.total_building_volume(value=histworm.总建筑体量) }}
+                            {% for err in form.total_building_volume.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="input_name">{{ form.plot_ratio.label }}</label>
+                            {{ form.plot_ratio(value=histworm.容积率) }}
+                            {% for err in form.plot_ratio.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="input_name">{{ form.greening_rate.label }}</label>
+                            {{ form.greening_rate(value=histworm.绿地率) }}
+                            {% for err in form.greening_rate.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label for="input_name">{{ form.presale_type.label }}</label>
+                            {{ form.presale_type(value=histworm.预售商品房) }}
+                            {% for err in form.presale_type.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.price_file.label }}</label>
+                            {{ form.price_file }}
+                            {% for err in form.price_file.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
                     </div>
                     <div class="box-body table-responsive no-padding">
                         <table class="table table-hover">
                             <tbody>
+                            <tr>
+                                <td class="td_bd">上传文件：</td>
+                                <td>{{ plnpricefile.price_file }}</td>
+                            </tr>
                             <tr>
                                 <td class="td_bd">开发单位：</td>
                                 <td>{{ histworm.开发单位 }}</td>
@@ -143,26 +219,6 @@
                                 <td class="td_bd">房源总量：</td>
                                 <td>{{ histworm.房源总量 }}套</td>
                             </tr>
-                            <tr>
-                                <td class="td_bd">物业公司：</td>
-                                <td>{{ histworm.物业公司 }}</td>
-                            </tr>
-                            <tr>
-                                <td class="td_bd">占地面积：</td>
-                                <td>{{ histworm.占地面积 }}平方米</td>
-                            </tr>
-                            <tr>
-                                <td class="td_bd">总建筑体量：</td>
-                                <td>{{ histworm.总建筑体量 }}</td>
-                            </tr>
-                            <tr>
-                                <td class="td_bd">容积率：</td>
-                                <td>{{ histworm.容积率 }}</td>
-                            </tr>
-                            <tr>
-                                <td class="td_bd">预售商品房：</td>
-                                <td>{{ histworm.预售商品房 }}</td>
-                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -178,6 +234,15 @@
 {% endblock %}
 
 {% block js %}
+<script>
+    $(document).ready(function () {
+        $('#input_activity_time').datepicker({
+            autoclose: true,
+            format: 'yyyy-mm-dd',
+            language: 'zh-CN',
+        });
+    });
+</script>
 <script>
     $(document).ready(function () {
         $("#g-3").addClass("active");

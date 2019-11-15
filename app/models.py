@@ -109,10 +109,12 @@ class Histworm(db.Model):
     开盘日期 = db.Column(db.Date)
     售楼电话 = db.Column(db.CHAR(30))
     房源总量 = db.Column(db.SmallInteger)
+    交付时间 = db.Column(db.Date)
     物业公司 = db.Column(db.CHAR(100))
     占地面积 = db.Column(db.DECIMAL(15, 3))
     总建筑体量 = db.Column(db.Text)
     容积率 = db.Column(db.Text)
+    绿地率 = db.Column(db.Text)
     预售商品房 = db.Column(db.CHAR(50))
 
     def __repr__(self):
@@ -251,3 +253,14 @@ class Price(db.Model):
     def __repr__(self):
         return "<Price %r>" % self.id
 
+
+# pln_price_file
+class Plnpricefile(db.Model):
+    __bind_key__ = "blbj_crawler"
+    __tablename__ = "pln_price_file"
+    id = db.Column(db.Integer, primary_key=True)
+    presale_license_number = db.Column(db.String(255))
+    price_file = db.Column(db.String(255))
+
+    def __repr__(self):
+        return "<Plnpricefile %r>" % self.id

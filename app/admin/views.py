@@ -5,7 +5,7 @@ from flask import render_template, redirect, url_for, flash, session, request, s
 from app.admin.forms import LoginForm, PnForm, PwdForm, AdminForm, ActForm, HistForm, HistEditForm, LandEditForm, \
     PriceForm, PriceeditForm
 from app.models import Admin, Adminlog, Oplog, Promotion_name, Activity, User, Histworm, Histlatlng, Landhistsup, \
-    Landmanual, Landpart1, Landpart2, Landlatlng, Price
+    Landmanual, Landpart1, Landpart2, Landlatlng, Price, Plnpricefile
 from app import db, app
 from functools import wraps
 import datetime
@@ -15,6 +15,7 @@ import os
 import uuid
 import pandas as pd
 import sqlalchemy
+import xlrd
 
 
 # 上下文应用处理器;转化为全局变量
@@ -522,6 +523,9 @@ def hist_edit(id=None, presale_license_number=None):
     histworm = Histworm.query.filter(
         Histworm.预售许可证号 == presale_license_number
     ).first()
+    histworm_count = Histworm.query.filter(
+        Histworm.预售许可证号 == presale_license_number
+    ).count()
 
     hist_latlng = Histlatlng.query.filter(
         Histlatlng.presale_license_number == presale_license_number
@@ -536,6 +540,12 @@ def hist_edit(id=None, presale_license_number=None):
     hist_land_count = Landhistsup.query.filter(
         Landhistsup.presale_license_number == presale_license_number
     ).count()
+
+    plnpricefile = Plnpricefile.query.filter(
+        Plnpricefile.presale_license_number == presale_license_number
+    ).order_by(
+        Plnpricefile.id.desc()
+    ).first()
 
     if form.validate_on_submit():
         data = form.data
@@ -575,6 +585,27 @@ def hist_edit(id=None, presale_license_number=None):
                 presale_license_number=form.presale_license_number.data
             )
 
+        if histworm_count >= 1:
+            histworm.预售许可证号 = form.presale_license_number.data
+            histworm.交付时间 = form.completion_date.data
+            histworm.物业公司 = form.prop_man_comp.data
+            histworm.占地面积 = form.floor_area.data
+            histworm.总建筑体量 = form.total_building_volume.data
+            histworm.容积率 = form.plot_ratio.data
+            histworm.绿地率 = form.greening_rate.data
+            histworm.预售商品房 = form.presale_type.data
+        else:
+            histworm = Histworm(
+                预售许可证号=form.presale_license_number.data,
+                交付时间=form.completion_date.data,
+                物业公司=form.prop_man_comp.data,
+                占地面积=form.floor_area.data,
+                总建筑体量=form.total_building_volume.data,
+                容积率=form.plot_ratio.data,
+                绿地率=form.greening_rate.data,
+                预售商品房=form.presale_type.data
+            )
+
         db.session.add(hist)
         db.session.commit()
 
@@ -584,13 +615,64 @@ def hist_edit(id=None, presale_license_number=None):
         db.session.add(hist_land)
         db.session.commit()
 
+        db.session.add(histworm)
+        db.session.commit()
+
+        # 添加价格数据
+        try:
+            file = secure_filename(form.price_file.data.filename)
+            if file == 'xlsx':
+                file = 'jiage.xlsx'
+
+            if not os.path.exists(app.config["UP_DIR"]):
+                os.makedirs(app.config["UP_DIR"])
+                os.chmod(app.config["UP_DIR"], "rw")
+
+            price_file = change_filename(file)
+            form.price_file.data.save(app.config["UP_DIR"] + price_file)
+
+            path = os.path.abspath(app.config["UP_DIR"] + price_file)
+            data = pd.DataFrame(pd.read_excel(path))
+
+            engine = sqlalchemy.create_engine(
+                'mysql+pymysql://root:Blbj123456@rm-bp16nmlmn159wru4reo.mysql.rds.aliyuncs.com:3306/blbj_crawler?charset=utf8')
+            data.to_sql('价格', con=engine, if_exists='append',
+                        index=False, index_label=False,
+                        dtype={
+                            "开发单位": sqlalchemy.types.VARCHAR(255),
+                            "预售许可证": sqlalchemy.types.VARCHAR(255),
+                            "项目名称": sqlalchemy.types.VARCHAR(255),
+                            "幢号": sqlalchemy.types.VARCHAR(255),
+                            "室号": sqlalchemy.types.VARCHAR(255),
+                            "层高": sqlalchemy.types.VARCHAR(255),
+                            "户型": sqlalchemy.types.VARCHAR(255),
+                            "建筑面积": sqlalchemy.types.DECIMAL(10, 2),
+                            "套内建筑面积": sqlalchemy.types.DECIMAL(10, 2),
+                            "公摊建筑面积": sqlalchemy.types.DECIMAL(10, 2),
+                            "计价单位": sqlalchemy.types.VARCHAR(255),
+                            "毛坯销售单价": sqlalchemy.types.DECIMAL(11, 2),
+                            "毛坯销售房屋总价": sqlalchemy.types.DECIMAL(11, 2),
+                            "备注": sqlalchemy.types.VARCHAR(255),
+                            "备注2": sqlalchemy.types.VARCHAR(255)
+                        })
+            engine.dispose()
+
+            plnpricefile = Plnpricefile(
+                presale_license_number=form.presale_license_number.data,
+                price_file=price_file
+            )
+            db.session.add(plnpricefile)
+            db.session.commit()
+            TransForm.oplog_add(o_type='add', type='price', da_attr=price_file)
+        except xlrd.XLRDError:
+            pass
         flash("修改成功!", "ok")
 
         TransForm.oplog_add(o_type='edit', type='pl3', da_attr=form.presale_license_number.data)
 
         redirect(url_for('admin.hist_edit', id=id, presale_license_number=presale_license_number))
     return render_template('admin/hist_edit.html', form=form, hist=hist, hist_latlng=hist_latlng, hist_land=hist_land,
-                           histworm=histworm)
+                           histworm=histworm, plnpricefile=plnpricefile)
 
 
 # 删除楼盘

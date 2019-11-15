@@ -438,14 +438,75 @@ class HistEditForm(FlaskForm):
     )
     plotnum = StringField(
         label="地块编号",
-        validators=[
-            DataRequired("请输入地块编号!")
-        ],
+        # validators=[
+        #     DataRequired("请输入地块编号!")
+        # ],
         description="地块编号",
         render_kw={
             "class": "form-control",
             "placeholder": "请输入地块编号！"
         }
+    )
+    completion_date = DateField(
+        label="交付时间",
+        description="交付时间",
+        render_kw={
+            "class": "form-control",
+            "id": "input_activity_time",
+            "placeholder": "请输入交付时间！"
+        }
+    )
+    prop_man_comp = StringField(
+        label="物业公司",
+        description="物业公司",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入物业公司！"
+        }
+    )
+    floor_area = FloatField(
+        label="占地面积",
+        description="占地面积",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入占地面积！"
+        }
+    )
+    total_building_volume = StringField(
+        label="总建筑体量",
+        description="总建筑体量",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入总建筑体量！"
+        }
+    )
+    plot_ratio = StringField(
+        label="容积率",
+        description="容积率",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入容积率！"
+        }
+    )
+    greening_rate = StringField(
+        label="绿地率",
+        description="绿地率",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入绿地率！"
+        }
+    )
+    presale_type = StringField(
+        label="预售商品房",
+        description="预售商品房",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入预售商品房！"
+        }
+    )
+    price_file = FileField(
+        label="文件",
+        description="文件"
     )
     submit = SubmitField(
         label="确认",
@@ -477,9 +538,9 @@ class LandEditForm(FlaskForm):
     )
     total_land_area = FloatField(
         label="总用地面积",
-        validators=[
-            DataRequired("请输入总用地面积!")
-        ],
+        # validators=[
+        #     DataRequired("请输入总用地面积!")
+        # ],
         description="总用地面积",
         render_kw={
             "class": "form-control",
@@ -488,9 +549,9 @@ class LandEditForm(FlaskForm):
     )
     allocated_area = FloatField(
         label="划拨面积",
-        validators=[
-            DataRequired("请输入划拨面积!")
-        ],
+        # validators=[
+        #     DataRequired("请输入划拨面积!")
+        # ],
         description="划拨面积",
         render_kw={
             "class": "form-control",
@@ -499,9 +560,9 @@ class LandEditForm(FlaskForm):
     )
     house_area = FloatField(
         label="住宅面积",
-        validators=[
-            DataRequired("请输入住宅面积!")
-        ],
+        # validators=[
+        #     DataRequired("请输入住宅面积!")
+        # ],
         description="住宅面积",
         render_kw={
             "class": "form-control",
@@ -510,9 +571,9 @@ class LandEditForm(FlaskForm):
     )
     commercial_area = FloatField(
         label="商业面积",
-        validators=[
-            DataRequired("请输入商业面积!")
-        ],
+        # validators=[
+        #     DataRequired("请输入商业面积!")
+        # ],
         description="商业面积",
         render_kw={
             "class": "form-control",
@@ -521,9 +582,9 @@ class LandEditForm(FlaskForm):
     )
     office_area = FloatField(
         label="办公面积",
-        validators=[
-            DataRequired("请输入办公面积!")
-        ],
+        # validators=[
+        #     DataRequired("请输入办公面积!")
+        # ],
         description="办公面积",
         render_kw={
             "class": "form-control",
@@ -532,9 +593,9 @@ class LandEditForm(FlaskForm):
     )
     other_area = FloatField(
         label="其他面积",
-        validators=[
-            DataRequired("请输入其他面积!")
-        ],
+        # validators=[
+        #     DataRequired("请输入其他面积!")
+        # ],
         description="其他面积",
         render_kw={
             "class": "form-control",
@@ -543,9 +604,9 @@ class LandEditForm(FlaskForm):
     )
     building_density = FloatField(
         label="建筑密度",
-        validators=[
-            DataRequired("请输入建筑密度!")
-        ],
+        # validators=[
+        #     DataRequired("请输入建筑密度!")
+        # ],
         description="建筑密度",
         render_kw={
             "class": "form-control",
@@ -554,9 +615,9 @@ class LandEditForm(FlaskForm):
     )
     building_height = FloatField(
         label="建筑高度",
-        validators=[
-            DataRequired("请输入建筑高度!")
-        ],
+        # validators=[
+        #     DataRequired("请输入建筑高度!")
+        # ],
         description="建筑高度",
         render_kw={
             "class": "form-control",
@@ -565,9 +626,9 @@ class LandEditForm(FlaskForm):
     )
     greening_rate = FloatField(
         label="绿地率",
-        validators=[
-            DataRequired("请输入绿地率!")
-        ],
+        # validators=[
+        #     DataRequired("请输入绿地率!")
+        # ],
         description="绿地率",
         render_kw={
             "class": "form-control",
@@ -576,9 +637,9 @@ class LandEditForm(FlaskForm):
     )
     remarks = StringField(
         label="备注",
-        validators=[
-            DataRequired("请输入备注!")
-        ],
+        # validators=[
+        #     DataRequired("请输入备注!")
+        # ],
         description="备注",
         render_kw={
             "class": "form-control",
