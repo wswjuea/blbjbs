@@ -72,6 +72,7 @@
                             <th>经度<span id="6"><i class="arrow desc"></i><i class="arrow asc"></i></span></th>
                             <th>纬度<span id="7"><i class="arrow desc"></i><i class="arrow asc"></i></span></th>
                             <th>地块编号<span id="8"><i class="arrow desc"></i><i class="arrow asc"></i></span></th>
+                            <th>是否已修改<span id="9"><i class="arrow desc"></i><i class="arrow asc"></i></span></th>
                             <th>操作事项</th>
                         </tr>
                         {% for v in page_data.items %}
@@ -84,6 +85,7 @@
                             <td>{{ v.Histlatlng.lng }}</td>
                             <td>{{ v.Histlatlng.lat }}</td>
                             <td>{{ v.Landhistsup.plotnum }}</td>
+                            <td>{{ v.Histlatlng.remark }}</td>
                             <td>
                                 <a href="{{ url_for('admin.hist_edit',id=v.Promotion_name.id,presale_license_number=v.Promotion_name.预售许可证号) }}"
                                    class="label label-success">编辑</a>

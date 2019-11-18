@@ -130,6 +130,7 @@ class Histlatlng(db.Model):
     building_address = db.Column(db.String(255))
     lat = db.Column(db.DECIMAL(9, 6))
     lng = db.Column(db.DECIMAL(9, 6))
+    remark = db.Column(db.String(50))
 
     def __repr__(self):
         return "<Histlatlng %r>" % self.id
@@ -224,6 +225,7 @@ class Landlatlng(db.Model):
     block_location = db.Column(db.String(255))
     lat = db.Column(db.DECIMAL(9, 6))
     lng = db.Column(db.DECIMAL(9, 6))
+    remark = db.Column(db.String(50))
 
     def __repr__(self):
         return "<Landlatlng %r>" % self.plotnum

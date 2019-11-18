@@ -436,6 +436,14 @@ class HistEditForm(FlaskForm):
             "placeholder": "请输入纬度！"
         }
     )
+    remark = StringField(
+        label="是否已修改",
+        description="是否已修改",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入是否已修改！"
+        }
+    )
     plotnum = StringField(
         label="地块编号",
         # validators=[
@@ -675,6 +683,14 @@ class LandEditForm(FlaskForm):
         render_kw={
             "class": "form-control",
             "placeholder": "请输入纬度！"
+        }
+    )
+    remark = StringField(
+        label="是否已修改",
+        description="是否已修改",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入是否已修改！"
         }
     )
     submit = SubmitField(

@@ -461,7 +461,8 @@ def hist_list(page=None):
             Promotion_name.项目备案名.like('%' + key + '%'),
             Promotion_name.项目推广名.like('%' + key + '%'),
             Histlatlng.building_address.like('%' + key + '%'),
-            Landhistsup.plotnum.like('%' + key + '%')
+            Landhistsup.plotnum.like('%' + key + '%'),
+            Histlatlng.remark.like('%' + key + '%')
         )
     ).order_by(
         # Promotion_name.id.desc()
@@ -566,12 +567,14 @@ def hist_edit(id=None, presale_license_number=None):
             hist_latlng.building_address = form.building_address.data
             hist_latlng.lng = form.lng.data
             hist_latlng.lat = form.lat.data
+            hist_latlng.remark = form.remark.data
         else:
             hist_latlng = Histlatlng(
                 presale_license_number=form.presale_license_number.data,
                 building_address=form.building_address.data,
                 lng=form.lng.data,
-                lat=form.lat.data
+                lat=form.lat.data,
+                remark=form.remark.data
             )
 
         if hist_land_count >= 1:
@@ -735,7 +738,8 @@ def land_list(page=None):
             Landpart2.地块编号.like('%' + key + '%'),
             Landmanual.地块详情.like('%' + key + '%'),
             Landlatlng.lng.like('%' + key + '%'),
-            Landlatlng.lat.like('%' + key + '%')
+            Landlatlng.lat.like('%' + key + '%'),
+            Landlatlng.remark.like('%' + key + '%')
         )
     ).order_by(
         LandOrd.landord(ad=ad, col=col)
@@ -785,12 +789,14 @@ def land_edit(land_detail=None, plotnum=None):
             land_latlng.block_location = form.block_location.data
             land_latlng.lng = form.lng.data
             land_latlng.lat = form.lat.data
+            land_latlng.remark = form.remark.data
         else:
             land_latlng = Landlatlng(
                 plotnum=form.plotnum.data,
                 block_location=form.block_location.data,
                 lng=form.lng.data,
-                lat=form.lat.data
+                lat=form.lat.data,
+                remark=form.remark.data
             )
 
         db.session.add(land)

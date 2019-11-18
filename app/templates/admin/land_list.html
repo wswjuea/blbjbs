@@ -72,6 +72,7 @@
                             <th>商业面积<span id="5"><i class="arrow desc"></i><i class="arrow asc"></i></span></th>
                             <th>经度<span id="6"><i class="arrow desc"></i><i class="arrow asc"></i></span></th>
                             <th>纬度<span id="7"><i class="arrow desc"></i><i class="arrow asc"></i></span></th>
+                            <th>是否已修改<span id="8"><i class="arrow desc"></i><i class="arrow asc"></i></span></th>
                             <th>操作事项</th>
                         </tr>
                         {% for v in page_data.items %}
@@ -83,6 +84,7 @@
                             <td>{{ v.Landmanual.商业面积 }}</td>
                             <td>{{ v.Landlatlng.lng }}</td>
                             <td>{{ v.Landlatlng.lat }}</td>
+                            <td>{{ v.Landlatlng.remark }}</td>
                             <td>
                                 <a href="{{ url_for('admin.land_edit',land_detail=v.Landmanual.地块详情,plotnum=v.Landpart2.地块编号) }}" class="label label-success">编辑</a>
                             </td>

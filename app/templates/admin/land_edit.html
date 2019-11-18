@@ -180,6 +180,15 @@
                             </div>
                             {% endfor %}
                         </div>
+                        <div class="form-group">
+                            <label for="input_name">{{ form.remark.label }}</label>
+                            {{ form.remark(value=land_latlng.remark) }}
+                            {% for err in form.remark.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
                     </div>
                     <div class="box-body table-responsive no-padding">
                         <table class="table table-hover">

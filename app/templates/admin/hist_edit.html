@@ -99,6 +99,15 @@
                             {% endfor %}
                         </div>
                         <div class="form-group">
+                            <label for="input_name">{{ form.remark.label }}</label>
+                            {{ form.remark(value=hist_latlng.remark) }}
+                            {% for err in form.remark.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
                             <label for="input_name">{{ form.plotnum.label }}</label>
                             {{ form.plotnum(value=hist_land.plotnum) }}
                             {% for err in form.plotnum.errors %}
