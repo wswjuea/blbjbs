@@ -44,7 +44,8 @@ land_col = {
     '5': Landmanual.商业面积,
     '6': Landlatlng.lng,
     '7': Landlatlng.lat,
-    '8': Landlatlng.remark
+    '8': Landlatlng.remark,
+    '9': Landmanual.id
 }
 
 

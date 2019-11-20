@@ -153,6 +153,7 @@ class Landhistsup(db.Model):
 class Landmanual(db.Model):
     __bind_key__ = "blbj_crawler"
     __tablename__ = "blbj_土地网手工"
+    id = db.Column(db.Integer, primary_key=True)
     地块详情 = db.Column(db.Text, primary_key=True)
     总用地面积 = db.Column(db.DECIMAL(20, 2))
     划拨面积 = db.Column(db.DECIMAL(20, 2))

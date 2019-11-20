@@ -714,7 +714,7 @@ def land_list(page=None):
         page = 1
     key = request.args.get("key", "")
     ad = request.args.get("ad", "1")
-    col = request.args.get("col", "1")
+    col = request.args.get("col", "9")
 
     page_data = db.session.query(
         Landmanual,

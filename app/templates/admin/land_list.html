@@ -65,6 +65,7 @@
                     <table class="table table-hover">
                         <tbody>
                         <tr>
+                            <th>编号<span id="9"><i class="arrow desc"></i><i class="arrow asc"></i></span></th>
                             <th>标题<span id="1"><i class="arrow desc"></i><i class="arrow asc"></i></span></th>
                             <th>地块编号<span id="2"><i class="arrow desc"></i><i class="arrow asc"></i></span></th>
                             <th>地块详情<span id="3"><i class="arrow desc"></i><i class="arrow asc"></i></span></th>
@@ -77,6 +78,7 @@
                         </tr>
                         {% for v in page_data.items %}
                         <tr>
+                            <td>{{ v.Landmanual.id }}</td>
                             <td>{{ v.Landpart1.标题 }}</td>
                             <td>{{ v.Landpart2.地块编号 }}</td>
                             <td>{{ v.Landmanual.地块详情 }}</td>
