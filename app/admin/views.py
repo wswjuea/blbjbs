@@ -888,7 +888,7 @@ def price_list(page=None):
         page = 1
     key = request.args.get("key", "")
     page_data = Price.query.filter(
-        Price.id > 405726,
+        # Price.id > 405726,
         or_(
             Price.预售许可证.like('%' + key + '%'),
             Price.项目名称.like('%' + key + '%'),
