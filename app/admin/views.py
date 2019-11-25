@@ -519,6 +519,8 @@ def hist_add():
 @admin.route("/hist/edit/<int:id>/<string:presale_license_number>/", methods=["GET", "POST"])
 @admin_login_req
 def hist_edit(id=None, presale_license_number=None):
+    key = request.args.get("key", "")
+
     form = HistEditForm()
     hist = Promotion_name.query.get_or_404(int(id))
 
@@ -676,7 +678,7 @@ def hist_edit(id=None, presale_license_number=None):
 
         redirect(url_for('admin.hist_edit', id=id, presale_license_number=presale_license_number))
     return render_template('admin/hist_edit.html', form=form, hist=hist, hist_latlng=hist_latlng, hist_land=hist_land,
-                           histworm=histworm, plnpricefile=plnpricefile)
+                           histworm=histworm, plnpricefile=plnpricefile, key=key)
 
 
 # 删除楼盘
@@ -752,6 +754,8 @@ def land_list(page=None):
 @admin.route("/land/edit/<string:land_detail>/<string:plotnum>/", methods=["GET", "POST"])
 @admin_login_req
 def land_edit(land_detail=None, plotnum=None):
+    key = request.args.get("key", "")
+
     form = LandEditForm()
     land = Landmanual.query.filter(
         Landmanual.地块详情 == land_detail
@@ -812,7 +816,7 @@ def land_edit(land_detail=None, plotnum=None):
 
         redirect(url_for('admin.land_edit', land_detail=land_detail, plotnum=plotnum))
     return render_template('admin/land_edit.html', form=form, land=land, land_latlng=land_latlng,
-                           landpart1=landpart1, landpart2=landpart2)
+                           landpart1=landpart1, landpart2=landpart2, key=key)
 
 
 # 修改上传文件名

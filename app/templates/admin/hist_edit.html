@@ -27,6 +27,8 @@
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <h3 class="box-title">修改楼盘</h3>
+                    <a href="{{ url_for('admin.hist_list',key=key,page=1) }}" class="btn btn-success"
+                       style="float: right;">返回</a>
                 </div>
                 <form role="form" method="post" novalidate enctype="multipart/form-data">
                     <div class="box-body">

@@ -88,7 +88,7 @@
                             <td>{{ v.Landlatlng.lat }}</td>
                             <td>{{ v.Landlatlng.remark }}</td>
                             <td>
-                                <a href="{{ url_for('admin.land_edit',land_detail=v.Landmanual.地块详情,plotnum=v.Landpart2.地块编号) }}" class="label label-success">编辑</a>
+                                <a href="{{ url_for('admin.land_edit',land_detail=v.Landmanual.地块详情,plotnum=v.Landpart2.地块编号,key=key) }}" class="label label-success">编辑</a>
                             </td>
                         </tr>
                         {% endfor %}
