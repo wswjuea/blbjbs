@@ -457,6 +457,9 @@ def hist_list(page=None):
         Landhistsup.presale_license_number == Promotion_name.预售许可证号
     ).filter(
         Promotion_name.预售许可证号.notlike('%' + '现' + '%'),
+        Promotion_name.预售许可证号.notlike('%' + '车位' + '%'),
+        Promotion_name.项目备案名.notlike('%' + '车位' + '%'),
+        Promotion_name.项目备案名.notlike('%' + '剩余房源' + '%'),
         or_(
             Promotion_name.预售许可证号.like('%' + key + '%'),
             Promotion_name.项目备案名.like('%' + key + '%'),
