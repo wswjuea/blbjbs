@@ -3,7 +3,7 @@ from sqlalchemy import desc, asc
 
 from app.models import Oplog
 from app import db
-from app.models import Promotion_name, Histlatlng, Landhistsup, Landpart1, Landpart2, Landmanual, Landlatlng
+from app.models import Promotion_name, Histlatlng, Landhistsup, Landpart1, Landpart2, Landmanual, Landlatlng, Landplus
 
 op_type = {
     'add': '添加',
@@ -16,7 +16,8 @@ tb_type = {
     'user': '会员',
     'pl3': '推广名&hist_latlng&land_histsup',
     'll4': '地块一层&二层&手工&land_latlng',
-    'price': '一房一价'
+    'price': '一房一价',
+    'landp': 'land_plus'
 }
 
 order_ad = {
@@ -46,6 +47,15 @@ land_col = {
     '7': Landlatlng.lat,
     '8': Landlatlng.remark,
     '9': Landmanual.id
+}
+
+land_plus_col = {
+    '1': Landplus.plotnum,
+    '2': Landplus.house_area,
+    '3': Landplus.commercial_area,
+    '4': Landlatlng.lng,
+    '5': Landlatlng.lat,
+    '6': Landlatlng.remark
 }
 
 
@@ -78,3 +88,12 @@ class LandOrd:
             return desc(land_col[col])
         else:
             return asc(land_col[col])
+
+
+class LandplusOrd:
+    @classmethod
+    def landplusord(cls, ad, col):
+        if order_ad[ad] == "desc":
+            return desc(land_plus_col[col])
+        else:
+            return asc(land_plus_col[col])

@@ -4,6 +4,7 @@ from wtforms import StringField, PasswordField, SubmitField, FileField, TextArea
 from wtforms.validators import DataRequired, ValidationError, EqualTo, length, Regexp
 
 from app.models import Admin
+from datetime import datetime
 
 
 class LoginForm(FlaskForm):
@@ -661,6 +662,422 @@ class LandEditForm(FlaskForm):
             "class": "form-control",
             "placeholder": "请输入地块位置！",
             "readonly": "true"
+        }
+    )
+    lng = FloatField(
+        label="经度",
+        validators=[
+            DataRequired("请输入正确的经度!")
+        ],
+        description="经度",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入经度！"
+        }
+    )
+    lat = FloatField(
+        label="纬度",
+        validators=[
+            DataRequired("请输入正确的纬度!")
+        ],
+        description="纬度",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入纬度！"
+        }
+    )
+    remark = StringField(
+        label="是否已修改",
+        description="是否已修改",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入是否已修改！"
+        }
+    )
+    submit = SubmitField(
+        label="确认",
+        render_kw={
+            "class": "btn btn-primary"
+        }
+    )
+
+
+# land_plus
+class LandPlusForm(FlaskForm):
+    plotnum = StringField(
+        label="地块编号",
+        description="地块编号",
+        validators=[
+            DataRequired("请输入地块编号!")
+        ],
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入地块编号！"
+        }
+    )
+    block_name = StringField(
+        label="地块名称",
+        description="地块名称",
+        validators=[
+            DataRequired("请输入地块名称!")
+        ],
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入地块名称！",
+        }
+    )
+    block_location = StringField(
+        label="地块位置",
+        description="地块位置",
+        validators=[
+            DataRequired("请输入地块位置!")
+        ],
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入地块位置！",
+        }
+    )
+    land_usage = StringField(
+        label="土地用途",
+        description="土地用途",
+        validators=[
+            DataRequired("请输入土地用途!")
+        ],
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入土地用途！",
+        }
+    )
+    auction_start_date = DateField(
+        label="拍卖开始时间",
+        description="拍卖开始时间",
+        default=datetime.strptime("1900-01-01", "%Y-%m-%d").date(),
+        render_kw={
+            "class": "form-control input_activity_time",
+            "placeholder": "请输入拍卖开始时间！"
+        }
+    )
+    listing_start_date = DateField(
+        label="挂牌开始时间",
+        description="挂牌开始时间",
+        default=datetime.strptime("1900-01-01", "%Y-%m-%d").date(),
+        render_kw={
+            "class": "form-control input_activity_time",
+            "placeholder": "请输入挂牌开始时间！"
+        }
+    )
+    listing_deadline = DateField(
+        label="挂牌截止时间",
+        description="挂牌截止时间",
+        default=datetime.strptime("1900-01-01", "%Y-%m-%d").date(),
+        render_kw={
+            "class": "form-control input_activity_time",
+            "placeholder": "请输入挂牌截止时间！"
+        }
+    )
+    margin_deadline = DateField(
+        label="保证金截止时间",
+        description="保证金截止时间",
+        default=datetime.strptime("1900-01-01", "%Y-%m-%d").date(),
+        render_kw={
+            "class": "form-control input_activity_time",
+            "placeholder": "请输入保证金截止时间！"
+        }
+    )
+    price = FloatField(
+        label="起始价",
+        description="起始价",
+        default=0,
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入起始价！"
+        }
+    )
+    bond = FloatField(
+        label="保证金",
+        description="保证金",
+        default=0,
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入保证金！"
+        }
+    )
+    competitive_unit = StringField(
+        label="竞得单位",
+        description="竞得单位",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入竞得单位！",
+        }
+    )
+    end_date = DateField(
+        label="结束时间",
+        description="结束时间",
+        default=datetime.strptime("1900-01-01", "%Y-%m-%d").date(),
+        render_kw={
+            "class": "form-control input_activity_time",
+            "placeholder": "请输入结束时间！"
+        }
+    )
+    terminal_date = DateField(
+        label="终止时间",
+        description="终止时间",
+        default=datetime.strptime("1900-01-01", "%Y-%m-%d").date(),
+        render_kw={
+            "class": "form-control input_activity_time",
+            "placeholder": "请输入终止时间！"
+        }
+    )
+    deal_date = DateField(
+        label="成交时间",
+        description="成交时间",
+        default=datetime.strptime("1900-01-01", "%Y-%m-%d").date(),
+        render_kw={
+            "class": "form-control input_activity_time",
+            "placeholder": "请输入成交时间！"
+        }
+    )
+    deal_price = FloatField(
+        label="成交价",
+        description="成交价",
+        default=0,
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入成交价！"
+        }
+    )
+    granting_area = FloatField(
+        label="出让面积",
+        description="出让面积",
+        default=0,
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入出让面积！"
+        }
+    )
+    region = StringField(
+        label="所属行政区",
+        description="所属行政区",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入所属行政区！",
+        }
+    )
+    age_limit = StringField(
+        label="出让年限",
+        description="出让年限",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入出让年限！",
+        }
+    )
+    # range_bidding_increase = FloatField(
+    #     label="竞价增价幅度",
+    #     description="竞价增价幅度",
+    #     render_kw={
+    #         "class": "form-control",
+    #         "placeholder": "请输入竞价增价幅度！"
+    #     }
+    # )
+    # price_ceiling = FloatField(
+    #     label="最高限价",
+    #     description="最高限价",
+    #     render_kw={
+    #         "class": "form-control",
+    #         "placeholder": "请输入最高限价！"
+    #     }
+    # )
+    comple_house_area = FloatField(
+        label="配套用房起始面积㎡",
+        description="配套用房起始面积㎡",
+        default=0,
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入配套用房起始面积㎡！"
+        }
+    )
+    match_house_area = FloatField(
+        label="投报配套用房幅度㎡",
+        description="投报配套用房幅度㎡",
+        default=0,
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入投报配套用房幅度㎡！"
+        }
+    )
+    highest_quotation = FloatField(
+        label="最高报价",
+        description="最高报价",
+        default=0,
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入最高报价！"
+        }
+    )
+    highest_quotation_unit = StringField(
+        label="最高报价单位",
+        description="最高报价单位",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入最高报价单位！",
+        }
+    )
+    register_auction_start_date = DateField(
+        label="报名开始时间(拍卖)",
+        description="报名开始时间(拍卖)",
+        default=datetime.strptime("1900-01-01", "%Y-%m-%d").date(),
+        render_kw={
+            "class": "form-control input_activity_time",
+            "placeholder": "请输入报名开始时间(拍卖)！"
+        }
+    )
+    register_auction_deadline = DateField(
+        label="报名截止时间(拍卖)",
+        description="报名截止时间(拍卖)",
+        default=datetime.strptime("1900-01-01", "%Y-%m-%d").date(),
+        render_kw={
+            "class": "form-control input_activity_time",
+            "placeholder": "请输入报名截止时间(拍卖)！"
+        }
+    )
+    bidder_conditions = StringField(
+        label="竞买人条件",
+        description="竞买人条件",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入竞买人条件！",
+        }
+    )
+    contacts = StringField(
+        label="联系人",
+        description="联系人",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入联系人！",
+        }
+    )
+    contacts_phone = StringField(
+        label="联系人电话",
+        description="联系人电话",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入联系人电话！",
+        }
+    )
+    plot_ratio = FloatField(
+        label="最大容积率",
+        description="最大容积率",
+        default=0,
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入最大容积率！"
+        }
+    )
+    total_land_area = FloatField(
+        label="总用地面积(平方米)",
+        description="总用地面积(平方米)",
+        default=0,
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入总用地面积(平方米)！"
+        }
+    )
+    allocated_area = FloatField(
+        label="划拨面积(平方米)",
+        description="划拨面积(平方米)",
+        default=0,
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入划拨面积(平方米)！"
+        }
+    )
+    house_area = FloatField(
+        label="住宅面积(平方米)",
+        description="住宅面积(平方米)",
+        default=0,
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入住宅面积(平方米)！"
+        }
+    )
+    commercial_area = FloatField(
+        label="商业面积(平方米)",
+        description="商业面积(平方米)",
+        default=0,
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入商业面积(平方米)！"
+        }
+    )
+    office_area = FloatField(
+        label="办公面积(平方米)",
+        description="办公面积(平方米)",
+        default=0,
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入办公面积(平方米)！"
+        }
+    )
+    other_area = FloatField(
+        label="其他面积(平方米)",
+        description="其他面积(平方米)",
+        default=0,
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入其他面积(平方米)！"
+        }
+    )
+    building_density = FloatField(
+        label="建筑密度",
+        description="建筑密度",
+        default=0,
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入建筑密度！"
+        }
+    )
+    building_height = FloatField(
+        label="建筑高度(米)",
+        description="建筑高度(米)",
+        default=0,
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入建筑高度(米)！"
+        }
+    )
+    greening_rate = FloatField(
+        label="绿地率",
+        description="绿地率",
+        default=0,
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入绿地率！"
+        }
+    )
+    remarks = StringField(
+        label="备注",
+        description="备注",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入备注！",
+        }
+    )
+    overall_floorage = FloatField(
+        label="总建筑面积(平方米)",
+        description="总建筑面积(平方米)",
+        default=0,
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入总建筑面积(平方米)！"
+        }
+    )
+    comprehensive_floor_price = FloatField(
+        label="综合楼面价",
+        description="综合楼面价",
+        default=0,
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入综合楼面价！"
         }
     )
     lng = FloatField(

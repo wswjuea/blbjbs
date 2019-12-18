@@ -232,6 +232,65 @@ class Landlatlng(db.Model):
         return "<Landlatlng %r>" % self.plotnum
 
 
+# land_plus
+class Landplus(db.Model):
+    __bind_key__ = "blbj_crawler"
+    __tablename__ = "land_plus"
+    plotnum = db.Column(db.String(255), primary_key=True)  # 地块编号
+    uuid = db.Column(db.Text)
+    title = db.Column(db.String(255))
+    order_title = db.Column(db.String(255))
+    block_name = db.Column(db.String(255))
+    block_location = db.Column(db.String(255))
+    land_usage = db.Column(db.String(255))
+    auction_start_date = db.Column(db.Date)
+    listing_start_date = db.Column(db.Date)
+    listing_deadline = db.Column(db.Date)
+    margin_deadline = db.Column(db.Date)
+    price = db.Column(db.DECIMAL(15, 2))
+    bond = db.Column(db.DECIMAL(15, 2))
+    competitive_unit = db.Column(db.String(255))
+    end_date = db.Column(db.Date)
+    terminal_date = db.Column(db.Date)
+    deal_date = db.Column(db.Date)
+    deal_price = db.Column(db.DECIMAL(15, 2))
+    plot_ratio_detail = db.Column(db.Text)
+    granting_area = db.Column(db.DECIMAL(10, 2))
+    region = db.Column(db.String(255))
+    age_limit = db.Column(db.String(255))
+    floor_pirce = db.Column(db.Text)
+    range_bidding_increase = db.Column(db.DECIMAL(15, 2))
+    price_ceiling = db.Column(db.DECIMAL(15, 2))
+    comple_house_area = db.Column(db.DECIMAL(15, 2))
+    match_house_area = db.Column(db.DECIMAL(15, 2))
+    highest_quotation = db.Column(db.DECIMAL(15, 2))
+    highest_quotation_unit = db.Column(db.String(255))
+    register_auction_start_date = db.Column(db.Date)
+    register_auction_deadline = db.Column(db.Date)
+    bidder_conditions = db.Column(db.Text)
+    contacts = db.Column(db.Text)
+    contacts_phone = db.Column(db.Text)
+    state = db.Column(db.String(255))
+    plot_ratio = db.Column(db.DECIMAL(10, 2))
+    total_land_area = db.Column(db.DECIMAL(20, 2))
+    allocated_area = db.Column(db.DECIMAL(20, 2))
+    house_area = db.Column(db.DECIMAL(20, 2))
+    commercial_area = db.Column(db.DECIMAL(20, 2))
+    office_area = db.Column(db.DECIMAL(20, 2))
+    other_area = db.Column(db.DECIMAL(20, 2))
+    building_density = db.Column(db.DECIMAL(10, 2))
+    building_height = db.Column(db.DECIMAL(10, 2))
+    greening_rate = db.Column(db.DECIMAL(10, 2))
+    remarks = db.Column(db.Text)
+    overall_floorage = db.Column(db.DECIMAL(20, 2))
+    comprehensive_floor_price = db.Column(db.DECIMAL(10, 2))
+    id = db.Column(db.Integer)
+    block_status = db.Column(db.String(255))
+
+    def __repr__(self):
+        return "<Landplus %r>" % self.plotnum
+
+
 # 价格
 class Price(db.Model):
     __bind_key__ = "blbj_crawler"

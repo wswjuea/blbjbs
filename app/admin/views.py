@@ -3,13 +3,13 @@ from werkzeug.utils import secure_filename
 from . import admin
 from flask import render_template, redirect, url_for, flash, session, request, send_from_directory
 from app.admin.forms import LoginForm, PnForm, PwdForm, AdminForm, ActForm, HistForm, HistEditForm, LandEditForm, \
-    PriceForm, PriceeditForm
+    PriceForm, PriceeditForm, LandPlusForm
 from app.models import Admin, Adminlog, Oplog, Promotion_name, Activity, User, Histworm, Histlatlng, Landhistsup, \
-    Landmanual, Landpart1, Landpart2, Landlatlng, Price, Plnpricefile
+    Landmanual, Landpart1, Landpart2, Landlatlng, Price, Plnpricefile, Landplus
 from app import db, app
 from functools import wraps
 import datetime
-from app.admin.transform import TransForm, HistOrd, LandOrd
+from app.admin.transform import TransForm, HistOrd, LandOrd, LandplusOrd
 from sqlalchemy import or_, and_
 import os
 import uuid
@@ -820,6 +820,225 @@ def land_edit(land_detail=None, plotnum=None):
         redirect(url_for('admin.land_edit', land_detail=land_detail, plotnum=plotnum))
     return render_template('admin/land_edit.html', form=form, land=land, land_latlng=land_latlng,
                            landpart1=landpart1, landpart2=landpart2, key=key)
+
+
+# 其他地块列表
+@admin.route("/landplus/list/<int:page>/", methods=["GET"])
+@admin_login_req
+def landplus_list(page=None):
+    if page is None:
+        page = 1
+    key = request.args.get("key", "")
+    ad = request.args.get("ad", "1")
+    col = request.args.get("col", "1")
+
+    page_data = db.session.query(
+        Landplus,
+        Landlatlng
+    ).outerjoin(
+        Landlatlng,
+        Landlatlng.plotnum == Landplus.plotnum
+    ).filter(
+        or_(
+            Landplus.plotnum.like('%' + key + '%'),
+            Landlatlng.lng.like('%' + key + '%'),
+            Landlatlng.lat.like('%' + key + '%'),
+            Landlatlng.remark.like('%' + key + '%')
+        )
+    ).order_by(
+        LandplusOrd.landplusord(ad=ad, col=col)
+    ).paginate(page=page, per_page=20)
+    return render_template('admin/landplus_list.html', page_data=page_data, key=key, ad=ad, col=col)
+
+
+# 添加其他地块
+@admin.route("/landplus/add/", methods=["GET", "POST"])
+@admin_login_req
+def landplus_add():
+    form = LandPlusForm()
+    if form.validate_on_submit():
+        data = form.data
+        land_count = Landpart2.query.filter_by(
+            地块编号=data["plotnum"]
+        ).count()
+        landplus_count = Landplus.query.filter_by(
+            plotnum=data["plotnum"]
+        ).count()
+
+        if land_count + landplus_count >= 1:
+            flash("地块编号已存在!", "err")
+            return redirect(url_for('admin.landplus_add'))
+
+        landplus = Landplus(
+            plotnum=data["plotnum"],
+            block_name=data["block_name"],
+            block_location=data["block_location"],
+            land_usage=data["land_usage"],
+            auction_start_date=data["auction_start_date"],
+            listing_start_date=data["listing_start_date"],
+            listing_deadline=data["listing_deadline"],
+            margin_deadline=data["margin_deadline"],
+            price=data["price"],
+            bond=data["bond"],
+            competitive_unit=data["competitive_unit"],
+            end_date=data["end_date"],
+            terminal_date=data["terminal_date"],
+            deal_date=data["deal_date"],
+            deal_price=data["deal_price"],
+            granting_area=data["granting_area"],
+            region=data["region"],
+            age_limit=data["age_limit"],
+            # range_bidding_increase=data["range_bidding_increase"],
+            # price_ceiling=data["price_ceiling"],
+            comple_house_area=data["comple_house_area"],
+            match_house_area=data["match_house_area"],
+            highest_quotation=data["highest_quotation"],
+            highest_quotation_unit=data["highest_quotation_unit"],
+            register_auction_start_date=data["register_auction_start_date"],
+            register_auction_deadline=data["register_auction_deadline"],
+            bidder_conditions=data["bidder_conditions"],
+            contacts=data["contacts"],
+            contacts_phone=data["contacts_phone"],
+            plot_ratio=data["plot_ratio"],
+            total_land_area=data["total_land_area"],
+            allocated_area=data["allocated_area"],
+            house_area=data["house_area"],
+            commercial_area=data["commercial_area"],
+            office_area=data["office_area"],
+            other_area=data["other_area"],
+            building_density=data["building_density"],
+            building_height=data["building_height"],
+            greening_rate=data["greening_rate"],
+            remarks=data["remarks"],
+            overall_floorage=data["overall_floorage"],
+            comprehensive_floor_price=data["comprehensive_floor_price"]
+        )
+        land_latlng = Landlatlng(
+            plotnum=data["plotnum"],
+            block_location=data["block_location"],
+            lng=data["lng"],
+            lat=data["lat"],
+            remark=data["remark"]
+        )
+        db.session.add(landplus)
+        db.session.commit()
+        db.session.add(land_latlng)
+        db.session.commit()
+        flash("添加成功!", "ok")
+
+        TransForm.oplog_add(o_type='add', type='landp', da_attr=data["plotnum"])
+
+    return render_template("admin/landplus_add.html", form=form)
+
+
+# 其他地块编辑
+@admin.route("/landplus/edit/<string:plotnum>/", methods=["GET", "POST"])
+@admin_login_req
+def landplus_edit(plotnum=None):
+    key = request.args.get("key", "")
+
+    form = LandPlusForm()
+    landplus = Landplus.query.filter(
+        Landplus.plotnum == plotnum
+    ).first()
+
+    land_latlng = Landlatlng.query.filter(
+        Landlatlng.plotnum == plotnum
+    ).first()
+    land_latlng_count = Landlatlng.query.filter(
+        Landlatlng.plotnum == plotnum
+    ).count()
+
+    if form.validate_on_submit():
+        landplus.plotnum = form.plotnum.data
+        landplus.block_name = form.block_name.data
+        landplus.block_location = form.block_location.data
+        landplus.land_usage = form.land_usage.data
+        landplus.auction_start_date = form.auction_start_date.data
+        landplus.listing_start_date = form.listing_start_date.data
+        landplus.listing_deadline = form.listing_deadline.data
+        landplus.margin_deadline = form.margin_deadline.data
+        landplus.price = form.price.data
+        landplus.bond = form.bond.data
+        landplus.competitive_unit = form.competitive_unit.data
+        landplus.end_date = form.end_date.data
+        landplus.terminal_date = form.terminal_date.data
+        landplus.deal_date = form.deal_date.data
+        landplus.deal_price = form.deal_price.data
+        landplus.granting_area = form.granting_area.data
+        landplus.region = form.region.data
+        landplus.age_limit = form.age_limit.data
+        landplus.comple_house_area = form.comple_house_area.data
+        landplus.match_house_area = form.match_house_area.data
+        landplus.highest_quotation = form.highest_quotation.data
+        landplus.highest_quotation_unit = form.highest_quotation_unit.data
+        landplus.register_auction_start_date = form.register_auction_start_date.data
+        landplus.register_auction_deadline = form.register_auction_deadline.data
+        landplus.bidder_conditions = form.bidder_conditions.data
+        landplus.contacts = form.contacts.data
+        landplus.contacts_phone = form.contacts_phone.data
+        landplus.plot_ratio = form.plot_ratio.data
+        landplus.total_land_area = form.total_land_area.data
+        landplus.allocated_area = form.allocated_area.data
+        landplus.house_area = form.house_area.data
+        landplus.commercial_area = form.commercial_area.data
+        landplus.office_area = form.office_area.data
+        landplus.other_area = form.other_area.data
+        landplus.building_density = form.building_density.data
+        landplus.building_height = form.building_height.data
+        landplus.greening_rate = form.greening_rate.data
+        landplus.remarks = form.remarks.data
+        landplus.overall_floorage = form.overall_floorage.data
+        landplus.comprehensive_floor_price = form.comprehensive_floor_price.data
+
+        if land_latlng_count >= 1:
+            land_latlng.plotnum = form.plotnum.data
+            land_latlng.block_location = form.block_location.data
+            land_latlng.lng = form.lng.data
+            land_latlng.lat = form.lat.data
+            land_latlng.remark = form.remark.data
+        else:
+            land_latlng = Landlatlng(
+                plotnum=form.plotnum.data,
+                block_location=form.block_location.data,
+                lng=form.lng.data,
+                lat=form.lat.data,
+                remark=form.remark.data
+            )
+
+        db.session.add(landplus)
+        db.session.commit()
+
+        db.session.add(land_latlng)
+        db.session.commit()
+
+        flash("修改成功!", "ok")
+
+        TransForm.oplog_add(o_type='edit', type='landp', da_attr=form.plotnum.data)
+
+        redirect(url_for('admin.landplus_edit', plotnum=plotnum))
+    return render_template('admin/landplus_edit.html', form=form, landplus=landplus, land_latlng=land_latlng, key=key)
+
+
+# 删除其他地块
+@admin.route("/landplus/del/<string:plotnum>/", methods=["GET"])
+@admin_login_req
+def landplus_del(plotnum=None):
+    landplus = Landplus.query.get_or_404(plotnum)
+    db.session.delete(landplus)
+    db.session.commit()
+
+    land_latlng = Landlatlng.query.filter(
+        Landlatlng.plotnum == plotnum
+    )
+    if land_latlng.count() >= 1:
+        db.session.delete(land_latlng.first())
+        db.session.commit()
+
+    flash("删除成功!", "ok")
+    TransForm.oplog_add(o_type='del', type='landp', da_attr=landplus.plotnum)
+
+    return redirect(url_for('admin.landplus_list', page=1))
 
 
 # 修改上传文件名
