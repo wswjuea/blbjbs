@@ -326,3 +326,18 @@ class Plnpricefile(db.Model):
 
     def __repr__(self):
         return "<Plnpricefile %r>" % self.id
+
+
+# feedback
+class Feedback(db.Model):
+    __bind_key__ = "ginger"
+    __tablename__ = "feedback"
+    id = db.Column(db.Integer, primary_key=True)
+    create_time = db.Column(db.DateTime)
+    title = db.Column(db.String(50))
+    text = db.Column(db.TEXT)
+    username = db.Column(db.String(50))
+    phone = db.Column(db.String(50))
+
+    def __repr__(self):
+        return "<Feedback %r>" % self.id

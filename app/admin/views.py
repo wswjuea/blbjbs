@@ -5,7 +5,7 @@ from flask import render_template, redirect, url_for, flash, session, request, s
 from app.admin.forms import LoginForm, PnForm, PwdForm, AdminForm, ActForm, HistForm, HistEditForm, LandEditForm, \
     PriceForm, PriceeditForm, LandPlusForm
 from app.models import Admin, Adminlog, Oplog, Promotion_name, Activity, User, Histworm, Histlatlng, Landhistsup, \
-    Landmanual, Landpart1, Landpart2, Landlatlng, Price, Plnpricefile, Landplus
+    Landmanual, Landpart1, Landpart2, Landlatlng, Price, Plnpricefile, Landplus, Feedback
 from app import db, app
 from functools import wraps
 import datetime
@@ -412,6 +412,25 @@ def user_list(page=None):
         User.id.desc()
     ).paginate(page=page, per_page=20)
     return render_template('admin/user_list.html', page_data=page_data, key=key)
+
+# 反馈列表
+@admin.route("/feedback/list/<int:page>/", methods=["GET"])
+@admin_login_req
+def feedback_list(page=None):
+    if page is None:
+        page = 1
+    key = request.args.get("key", "")
+    page_data = Feedback.query.filter(
+        or_(
+            Feedback.create_time.like('%' + key + '%'),
+            Feedback.title.like('%' + key + '%'),
+            Feedback.username.like('%' + key + '%'),
+            Feedback.phone.like('%' + key + '%')
+        )
+    ).order_by(
+        Feedback.id.desc()
+    ).paginate(page=page, per_page=20)
+    return render_template('admin/feedback_list.html', page_data=page_data, key=key)
 
 
 @admin.route("/user/view/<int:id>/", methods=["GET"])
