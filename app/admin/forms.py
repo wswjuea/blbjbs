@@ -694,6 +694,10 @@ class LandEditForm(FlaskForm):
             "placeholder": "请输入是否已修改！"
         }
     )
+    land_file = FileField(
+        label="文件",
+        description="文件"
+    )
     submit = SubmitField(
         label="确认",
         render_kw={
@@ -1109,6 +1113,10 @@ class LandPlusForm(FlaskForm):
             "class": "form-control",
             "placeholder": "请输入是否已修改！"
         }
+    )
+    land_file = FileField(
+        label="文件",
+        description="文件"
     )
     submit = SubmitField(
         label="确认",

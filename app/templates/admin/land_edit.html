@@ -31,7 +31,7 @@
                     <a href="{{ url_for('admin.land_list',key=key,page=1) }}" class="btn btn-success"
                        style="float: right;">返回</a>
                 </div>
-                <form role="form" method="post" novalidate>
+                <form role="form" method="post" novalidate enctype="multipart/form-data">
                     <div class="box-body">
                         {% for msg in get_flashed_messages(category_filter=["ok"]) %}
                         <div class="alert alert-success alert-dismissible">
@@ -186,6 +186,15 @@
                             <label for="input_name">{{ form.remark.label }}</label>
                             {{ form.remark(value=land_latlng.remark) }}
                             {% for err in form.remark.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.land_file.label }}</label>
+                            {{ form.land_file }}
+                            {% for err in form.land_file.errors %}
                             <div class="col-md-12">
                                 <font style="color: red">{{ err }}</font>
                             </div>

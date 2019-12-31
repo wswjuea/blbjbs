@@ -9,7 +9,7 @@ from app.models import Admin, Adminlog, Oplog, Promotion_name, Activity, User, H
 from app import db, app
 from functools import wraps
 import datetime
-from app.admin.transform import TransForm, HistOrd, LandOrd, LandplusOrd
+from app.admin.transform import TransForm, HistOrd, LandOrd, LandplusOrd, CheckLandfile
 from sqlalchemy import or_, and_
 import os
 import uuid
@@ -413,6 +413,7 @@ def user_list(page=None):
     ).paginate(page=page, per_page=20)
     return render_template('admin/user_list.html', page_data=page_data, key=key)
 
+
 # 反馈列表
 @admin.route("/feedback/list/<int:page>/", methods=["GET"])
 @admin_login_req
@@ -654,7 +655,7 @@ def hist_edit(id=None, presale_license_number=None):
 
             if not os.path.exists(app.config["UP_DIR"]):
                 os.makedirs(app.config["UP_DIR"])
-                os.chmod(app.config["UP_DIR"], "rw")
+                os.chmod(app.config["UP_DIR"], 777)
 
             price_file = change_filename(file)
             form.price_file.data.save(app.config["UP_DIR"] + price_file)
@@ -832,6 +833,20 @@ def land_edit(land_detail=None, plotnum=None):
         db.session.add(land_latlng)
         db.session.commit()
 
+        # 6文件压缩包导入
+        filename = form.land_file.data.filename
+        if CheckLandfile.check_file_type(filename):
+            path = os.path.join(app.config["LAND_UP_DIR"], plotnum)
+
+            if not os.path.exists(path):
+                os.makedirs(path)
+                os.chmod(path, 777)
+
+            file_path = os.path.join(path, filename)
+            form.land_file.data.save(file_path)
+        else:
+            pass
+
         flash("修改成功!", "ok")
 
         TransForm.oplog_add(o_type='edit', type='ll4', da_attr=form.land_detail.data)
@@ -943,6 +958,21 @@ def landplus_add():
         db.session.commit()
         db.session.add(land_latlng)
         db.session.commit()
+
+        # 6文件压缩包导入
+        filename = form.land_file.data.filename
+        if CheckLandfile.check_file_type(filename):
+            path = os.path.join(app.config["LAND_UP_DIR"], data["plotnum"])
+
+            if not os.path.exists(path):
+                os.makedirs(path)
+                os.chmod(path, 777)
+
+            file_path = os.path.join(path, filename)
+            form.land_file.data.save(file_path)
+        else:
+            pass
+
         flash("添加成功!", "ok")
 
         TransForm.oplog_add(o_type='add', type='landp', da_attr=data["plotnum"])
@@ -1030,6 +1060,20 @@ def landplus_edit(plotnum=None):
 
         db.session.add(land_latlng)
         db.session.commit()
+
+        # 6文件压缩包导入
+        filename = form.land_file.data.filename
+        if CheckLandfile.check_file_type(filename):
+            path = os.path.join(app.config["LAND_UP_DIR"], plotnum)
+
+            if not os.path.exists(path):
+                os.makedirs(path)
+                os.chmod(path, 777)
+
+            file_path = os.path.join(path, filename)
+            form.land_file.data.save(file_path)
+        else:
+            pass
 
         flash("修改成功!", "ok")
 

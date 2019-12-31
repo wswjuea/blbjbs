@@ -58,6 +58,15 @@ land_plus_col = {
     '6': Landlatlng.remark
 }
 
+land_file_type = {
+    '1': "出让公告",
+    '2': "出让须知",
+    '3': "宗地界址图",
+    '4': "宗地规划指标要求",
+    '5': "成交确认书",
+    '6': "国有建设用地使用权出让合同"
+}
+
 
 class TransForm:
     @classmethod
@@ -97,3 +106,19 @@ class LandplusOrd:
             return desc(land_plus_col[col])
         else:
             return asc(land_plus_col[col])
+
+
+class CheckLandfile:
+    @classmethod
+    def check_file_type(cls, filename):
+        if filename is not None and filename != "":
+            file_type = ['jpg', 'doc', 'docx', 'txt', 'pdf', 'PDF', 'png', 'PNG', 'xls', 'rar', 'exe', 'md', 'zip']
+            # 获取文件后缀
+            ext = filename.split('.')[1]
+            # 判断文件是否是允许上传得类型
+            if ext in file_type:
+                return True
+            else:
+                pass
+        else:
+            pass
