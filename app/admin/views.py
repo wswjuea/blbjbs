@@ -211,18 +211,19 @@ def act_add():
     if form.validate_on_submit():
         data = form.data
         act_count = Activity.query.filter_by(
-            活动主题=data["theme"]
+            theme=data["theme"]
         ).count()
         if act_count >= 1:
             flash("活动主题已存在!", "err")
             return redirect(url_for('admin.act_add'))
         act = Activity(
-            项目名称=data["building_promotion_name"],
-            时间=data["date"],
-            活动主办单位=data["organizer"],
-            活动主题=data["theme"],
-            活动情况=data["situation"],
-            活动链接=data["link"]
+            building_promotion_name=data["building_promotion_name"],
+            date=data["date"],
+            organizer=data["organizer"],
+            theme=data["theme"],
+            situation=data["situation"],
+            link=data["link"],
+            status=1
         )
         db.session.add(act)
         db.session.commit()
@@ -242,11 +243,11 @@ def act_list(page=None):
     key = request.args.get("key", "")
     page_data = Activity.query.filter(
         or_(
-            Activity.项目名称.like('%' + key + '%'),
-            Activity.活动主办单位.like('%' + key + '%'),
-            Activity.活动主题.like('%' + key + '%'),
-            Activity.活动情况.like('%' + key + '%'),
-            Activity.活动链接.like('%' + key + '%')
+            Activity.building_promotion_name.like('%' + key + '%'),
+            Activity.organizer.like('%' + key + '%'),
+            Activity.theme.like('%' + key + '%'),
+            Activity.situation.like('%' + key + '%'),
+            Activity.link.like('%' + key + '%')
         )
     ).order_by(
         Activity.id.desc()
@@ -263,7 +264,7 @@ def act_del(id=None):
     db.session.commit()
     flash("删除活动成功!", "ok")
 
-    TransForm.oplog_add(o_type='del', type='act', da_attr=act.活动主题)
+    TransForm.oplog_add(o_type='del', type='act', da_attr=act.theme)
 
     return redirect(url_for('admin.act_list', page=1))
 
@@ -272,24 +273,26 @@ def act_del(id=None):
 @admin.route("/act/edit/<int:id>/", methods=["GET", "POST"])
 @admin_login_req
 def act_edit(id=None):
+    key = request.args.get("key", "")
+
     form = ActForm()
     act = Activity.query.get_or_404(id)
     if form.validate_on_submit():
         data = form.data
         act_count = Activity.query.filter_by(
-            活动主题=data["theme"]
+            theme=data["theme"]
         ).count()
-        if act.活动主题 != data["theme"] and \
+        if act.theme != data["theme"] and \
                 act_count >= 1:
             flash("活动主题已存在!", "err")
             return redirect(url_for('admin.act_edit', id=id))
 
-        act.项目名称 = data["building_promotion_name"]
-        act.时间 = data["date"]
-        act.活动主办单位 = data["organizer"]
-        act.活动主题 = data["theme"]
-        act.活动情况 = data["situation"]
-        act.活动链接 = data["link"]
+        act.building_promotion_name = data["building_promotion_name"]
+        act.date = data["date"]
+        act.organizer = data["organizer"]
+        act.theme = data["theme"]
+        act.situation = data["situation"]
+        act.link = data["link"]
 
         db.session.add(act)
         db.session.commit()
@@ -298,7 +301,7 @@ def act_edit(id=None):
         TransForm.oplog_add(o_type='edit', type='act', da_attr=data["theme"])
 
         redirect(url_for('admin.act_edit', id=id))
-    return render_template('admin/act_edit.html', form=form, act=act)
+    return render_template('admin/act_edit.html', form=form, act=act, key=key)
 
 
 # 管理员操作日志

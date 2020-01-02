@@ -17,15 +17,16 @@ class Promotion_name(db.Model):
 
 # 活动
 class Activity(db.Model):
-    __bind_key__ = "blbj_crawler"
-    __tablename__ = "活动"
+    __bind_key__ = "ginger"
+    __tablename__ = "activity"
     id = db.Column(db.Integer, primary_key=True)
-    项目名称 = db.Column(db.String(11))
-    时间 = db.Column(db.Date)
-    活动主办单位 = db.Column(db.String(255))
-    活动主题 = db.Column(db.String(255))
-    活动情况 = db.Column(db.String(255))
-    活动链接 = db.Column(db.String(255))
+    building_promotion_name = db.Column(db.String(11))
+    date = db.Column(db.Date)
+    organizer = db.Column(db.String(255))
+    theme = db.Column(db.String(255))
+    situation = db.Column(db.String(255))
+    link = db.Column(db.String(255))
+    status = db.Column(db.SmallInteger)
 
     def __repr__(self):
         return "<Activity %r>" % self.id

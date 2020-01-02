@@ -51,14 +51,14 @@
                         {% for v in page_data.items %}
                         <tr>
                             <td>{{ v.id }}</td>
-                            <td>{{ v.项目名称 }}</td>
-                            <td>{{ v.时间 }}</td>
-                            <td>{{ v.活动主办单位 }}</td>
-                            <td>{{ v.活动主题 }}</td>
-                            <td>{{ v.活动情况 }}</td>
-                            <td>{{ v.活动链接 }}</td>
+                            <td>{{ v.building_promotion_name }}</td>
+                            <td>{{ v.date }}</td>
+                            <td>{{ v.organizer }}</td>
+                            <td>{{ v.theme }}</td>
+                            <td>{{ v.situation }}</td>
+                            <td>{{ v.link }}</td>
                             <td>
-                                <a href="{{ url_for('admin.act_edit',id=v.id) }}" class="label label-success">编辑</a>
+                                <a href="{{ url_for('admin.act_edit',id=v.id,key=key) }}" class="label label-success">编辑</a>
                                 &nbsp;
                                 <a href="{{ url_for('admin.act_del',id=v.id) }}" class="label label-danger">删除</a>
                             </td>
