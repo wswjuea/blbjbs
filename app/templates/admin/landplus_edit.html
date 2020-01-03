@@ -444,6 +444,16 @@
                             {% endfor %}
                         </div>
                     </div>
+                    <div class="box-body table-responsive no-padding">
+                        <table class="table table-hover">
+                            <tbody>
+                            <tr>
+                                <td class="td_bd">已上传文件：</td>
+                                <td>{{ files }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                     <div class="box-footer">
                         {{ form.csrf_token }}
                         {{ form.submit }}

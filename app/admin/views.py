@@ -802,6 +802,12 @@ def land_edit(land_detail=None, plotnum=None):
         Landlatlng.plotnum == plotnum
     ).count()
 
+    try:
+        path = os.path.join(app.config["LAND_UP_DIR"], plotnum)
+        files = os.listdir(path)
+    except FileNotFoundError:
+        files = []
+
     if form.validate_on_submit():
         land.地块详情 = form.land_detail.data
         land.总用地面积 = form.total_land_area.data
@@ -856,7 +862,7 @@ def land_edit(land_detail=None, plotnum=None):
 
         redirect(url_for('admin.land_edit', land_detail=land_detail, plotnum=plotnum))
     return render_template('admin/land_edit.html', form=form, land=land, land_latlng=land_latlng,
-                           landpart1=landpart1, landpart2=landpart2, key=key)
+                           landpart1=landpart1, landpart2=landpart2, key=key, files=files)
 
 
 # 其他地块列表
@@ -1001,6 +1007,12 @@ def landplus_edit(plotnum=None):
         Landlatlng.plotnum == plotnum
     ).count()
 
+    try:
+        path = os.path.join(app.config["LAND_UP_DIR"], plotnum)
+        files = os.listdir(path)
+    except FileNotFoundError:
+        files = []
+
     if form.validate_on_submit():
         landplus.plotnum = form.plotnum.data
         landplus.block_name = form.block_name.data
@@ -1083,7 +1095,8 @@ def landplus_edit(plotnum=None):
         TransForm.oplog_add(o_type='edit', type='landp', da_attr=form.plotnum.data)
 
         redirect(url_for('admin.landplus_edit', plotnum=plotnum))
-    return render_template('admin/landplus_edit.html', form=form, landplus=landplus, land_latlng=land_latlng, key=key)
+    return render_template('admin/landplus_edit.html', form=form, landplus=landplus, land_latlng=land_latlng,
+                           key=key, files=files)
 
 
 # 删除其他地块
