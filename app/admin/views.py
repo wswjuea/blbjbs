@@ -907,18 +907,20 @@ def land_edit(land_detail=None, plotnum=None):
         db.session.commit()
 
         # 6文件压缩包导入
-        filename = form.land_file.data.filename
-        if CheckLandfile.check_file_type(filename):
-            path = os.path.join(app.config["LAND_UP_DIR"], plotnum)
+        file_obj = request.files.getlist('land_file')
+        for file in file_obj:
+            filename = file.filename
+            if CheckLandfile.check_file_type(filename):
+                path = os.path.join(app.config["LAND_UP_DIR"], plotnum)
 
-            if not os.path.exists(path):
-                os.makedirs(path)
-                os.chmod(path, 777)
+                if not os.path.exists(path):
+                    os.makedirs(path)
+                    os.chmod(path, 777)
 
-            file_path = os.path.join(path, filename)
-            form.land_file.data.save(file_path)
-        else:
-            pass
+                file_path = os.path.join(path, filename)
+                file.save(file_path)
+            else:
+                pass
 
         flash("修改成功!", "ok")
 
@@ -1051,18 +1053,20 @@ def landplus_add():
         db.session.commit()
 
         # 6文件压缩包导入
-        filename = form.land_file.data.filename
-        if CheckLandfile.check_file_type(filename):
-            path = os.path.join(app.config["LAND_UP_DIR"], data["plotnum"])
+        file_obj = request.files.getlist('land_file')
+        for file in file_obj:
+            filename = file.filename
+            if CheckLandfile.check_file_type(filename):
+                path = os.path.join(app.config["LAND_UP_DIR"], data["plotnum"])
 
-            if not os.path.exists(path):
-                os.makedirs(path)
-                os.chmod(path, 777)
+                if not os.path.exists(path):
+                    os.makedirs(path)
+                    os.chmod(path, 777)
 
-            file_path = os.path.join(path, filename)
-            form.land_file.data.save(file_path)
-        else:
-            pass
+                file_path = os.path.join(path, filename)
+                file.save(file_path)
+            else:
+                pass
 
         flash("添加成功!", "ok")
 
@@ -1191,18 +1195,20 @@ def landplus_edit(plotnum=None):
         db.session.commit()
 
         # 6文件压缩包导入
-        filename = form.land_file.data.filename
-        if CheckLandfile.check_file_type(filename):
-            path = os.path.join(app.config["LAND_UP_DIR"], plotnum)
+        file_obj = request.files.getlist('land_file')
+        for file in file_obj:
+            filename = file.filename
+            if CheckLandfile.check_file_type(filename):
+                path = os.path.join(app.config["LAND_UP_DIR"], plotnum)
 
-            if not os.path.exists(path):
-                os.makedirs(path)
-                os.chmod(path, 777)
+                if not os.path.exists(path):
+                    os.makedirs(path)
+                    os.chmod(path, 777)
 
-            file_path = os.path.join(path, filename)
-            form.land_file.data.save(file_path)
-        else:
-            pass
+                file_path = os.path.join(path, filename)
+                file.save(file_path)
+            else:
+                pass
 
         flash("修改成功!", "ok")
 

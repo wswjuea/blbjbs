@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, FileField, TextAreaField, SelectField, SelectMultipleField, \
-    DateField, FloatField
+    DateField, FloatField, MultipleFileField
 from wtforms.validators import DataRequired, ValidationError, EqualTo, length, Regexp
 
 from app.models import Admin
@@ -708,7 +708,7 @@ class LandEditForm(FlaskForm):
         # ],
         description="图片"
     )
-    land_file = FileField(
+    land_file = MultipleFileField(
         label="文件",
         description="文件"
     )
@@ -1135,7 +1135,7 @@ class LandPlusForm(FlaskForm):
         # ],
         description="图片"
     )
-    land_file = FileField(
+    land_file = MultipleFileField(
         label="文件",
         description="文件"
     )
