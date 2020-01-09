@@ -137,6 +137,16 @@ class Histlatlng(db.Model):
         return "<Histlatlng %r>" % self.id
 
 
+# hist_logo
+class Histlogo(db.Model):
+    __bind_key__ = "ginger"
+    __tablename__ = "hist_logo"
+    id = db.Column(db.Integer, primary_key=True)
+    presale_license_number = db.Column(db.String(255))
+    logo = db.Column(db.String(255))
+    status = db.Column(db.SmallInteger)
+
+
 # land_histsup
 class Landhistsup(db.Model):
     __bind_key__ = "blbj_crawler"
@@ -290,6 +300,16 @@ class Landplus(db.Model):
 
     def __repr__(self):
         return "<Landplus %r>" % self.plotnum
+
+
+# land_logo
+class Landlogo(db.Model):
+    __bind_key__ = "ginger"
+    __tablename__ = "land_logo"
+    id = db.Column(db.Integer, primary_key=True)
+    plotnum = db.Column(db.String(255))
+    logo = db.Column(db.String(255))
+    status = db.Column(db.SmallInteger)
 
 
 # 价格

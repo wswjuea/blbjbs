@@ -513,6 +513,13 @@ class HistEditForm(FlaskForm):
             "placeholder": "请输入预售商品房！"
         }
     )
+    logo = FileField(
+        label="图片",
+        # validators=[
+        #     DataRequired("请上传图片!")
+        # ],
+        description="图片"
+    )
     price_file = FileField(
         label="文件",
         description="文件"
@@ -693,6 +700,13 @@ class LandEditForm(FlaskForm):
             "class": "form-control",
             "placeholder": "请输入是否已修改！"
         }
+    )
+    logo = FileField(
+        label="图片",
+        # validators=[
+        #     DataRequired("请上传图片!")
+        # ],
+        description="图片"
     )
     land_file = FileField(
         label="文件",
@@ -1113,6 +1127,13 @@ class LandPlusForm(FlaskForm):
             "class": "form-control",
             "placeholder": "请输入是否已修改！"
         }
+    )
+    logo = FileField(
+        label="图片",
+        # validators=[
+        #     DataRequired("请上传图片!")
+        # ],
+        description="图片"
     )
     land_file = FileField(
         label="文件",

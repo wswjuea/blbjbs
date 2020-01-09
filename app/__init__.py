@@ -25,6 +25,7 @@ app.config["SQLALCHEMY_COMMIT_TEARDOWN"] = True
 app.config["SECRET_KEY"] = "887771752dac4713b2c4fdbe8a06d5c2"
 app.config["UP_DIR"] = os.path.join(os.path.abspath(os.path.dirname(__file__)), "files/price_files/")
 app.config["LAND_UP_DIR"] = os.path.join(os.path.abspath(os.path.dirname(__file__)), "files", "land_files")
+app.config["UP_LOGO_DIR"] = os.path.join(os.path.abspath(os.path.dirname(__file__)), "static/uploads/")
 
 app.debug = True
 db = SQLAlchemy(app)

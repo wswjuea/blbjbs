@@ -182,6 +182,17 @@
                             {% endfor %}
                         </div>
                         <div class="form-group">
+                            <label for="input_logo">{{ form.logo.label }}</label>
+                            {{ form.logo }}
+                            {% for err in form.logo.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                            <img src={{'http://q3qa2e2ds.bkt.clouddn.com/'+histlogo.logo}} style="margin-top:5px;" class="img-responsive"
+                                 alt="">
+                        </div>
+                        <div class="form-group">
                             <label>{{ form.price_file.label }}</label>
                             {{ form.price_file }}
                             {% for err in form.price_file.errors %}

@@ -5,11 +5,11 @@ from flask import render_template, redirect, url_for, flash, session, request, s
 from app.admin.forms import LoginForm, PnForm, PwdForm, AdminForm, ActForm, HistForm, HistEditForm, LandEditForm, \
     PriceForm, PriceeditForm, LandPlusForm
 from app.models import Admin, Adminlog, Oplog, Promotion_name, Activity, User, Histworm, Histlatlng, Landhistsup, \
-    Landmanual, Landpart1, Landpart2, Landlatlng, Price, Plnpricefile, Landplus, Feedback
+    Landmanual, Landpart1, Landpart2, Landlatlng, Price, Plnpricefile, Landplus, Feedback, Histlogo, Landlogo
 from app import db, app
 from functools import wraps
 import datetime
-from app.admin.transform import TransForm, HistOrd, LandOrd, LandplusOrd, CheckLandfile
+from app.admin.transform import TransForm, HistOrd, LandOrd, LandplusOrd, CheckLandfile, UploadQiniu
 from sqlalchemy import or_, and_
 import os
 import uuid
@@ -577,6 +577,20 @@ def hist_edit(id=None, presale_license_number=None):
         Plnpricefile.id.desc()
     ).first()
 
+    histlogo_count = Histlogo.query.filter(
+        Histlogo.presale_license_number == presale_license_number
+    ).count()
+    if histlogo_count >= 1:
+        histlogo = Histlogo.query.filter(
+            Histlogo.presale_license_number == presale_license_number
+        ).first()
+    else:
+        histlogo = Histlogo(
+            presale_license_number=presale_license_number,
+            logo='',
+            status=1
+        )
+
     if form.validate_on_submit():
         data = form.data
         hist_count = Promotion_name.query.filter_by(
@@ -638,6 +652,23 @@ def hist_edit(id=None, presale_license_number=None):
                 预售商品房=form.presale_type.data
             )
 
+        if histlogo_count >= 1:
+            if form.logo.data.filename != "":
+                file_logo = secure_filename(form.logo.data.filename)
+                histlogo.logo = change_filename(file_logo)
+                UploadQiniu.upload_qiniu(filestorage=form.logo.data, filename=histlogo.logo)
+                # form.logo.data.save(app.config["UP_LOGO_DIR"] + histlogo.logo)
+        else:
+            if form.logo.data.filename != "":
+                file_logo = secure_filename(form.logo.data.filename)
+                histlogo = Histlogo(
+                    presale_license_number=form.presale_license_number.data,
+                    logo=change_filename(file_logo),
+                    status=1
+                )
+                UploadQiniu.upload_qiniu(filestorage=form.logo.data, filename=histlogo.logo)
+                # form.logo.data.save(app.config["UP_LOGO_DIR"] + histlogo.logo)
+
         db.session.add(hist)
         db.session.commit()
 
@@ -648,6 +679,7 @@ def hist_edit(id=None, presale_license_number=None):
         db.session.commit()
 
         db.session.add(histworm)
+        db.session.add(histlogo)
         db.session.commit()
 
         # 添加价格数据
@@ -704,7 +736,7 @@ def hist_edit(id=None, presale_license_number=None):
 
         redirect(url_for('admin.hist_edit', id=id, presale_license_number=presale_license_number))
     return render_template('admin/hist_edit.html', form=form, hist=hist, hist_latlng=hist_latlng, hist_land=hist_land,
-                           histworm=histworm, plnpricefile=plnpricefile, key=key)
+                           histworm=histworm, plnpricefile=plnpricefile, key=key, histlogo=histlogo)
 
 
 # 删除楼盘
@@ -802,6 +834,20 @@ def land_edit(land_detail=None, plotnum=None):
         Landlatlng.plotnum == plotnum
     ).count()
 
+    landlogo_count = Landlogo.query.filter(
+        Landlogo.plotnum == plotnum
+    ).count()
+    if landlogo_count >= 1:
+        landlogo = Landlogo.query.filter(
+            Landlogo.plotnum == plotnum
+        ).first()
+    else:
+        landlogo = Landlogo(
+            plotnum=plotnum,
+            logo='',
+            status=1
+        )
+
     try:
         path = os.path.join(app.config["LAND_UP_DIR"], plotnum)
         files = os.listdir(path)
@@ -836,10 +882,28 @@ def land_edit(land_detail=None, plotnum=None):
                 remark=form.remark.data
             )
 
+        if landlogo_count >= 1:
+            if form.logo.data.filename != "":
+                file_logo = secure_filename(form.logo.data.filename)
+                landlogo.logo = change_filename(file_logo)
+                UploadQiniu.upload_qiniu(filestorage=form.logo.data, filename=landlogo.logo)
+                # form.logo.data.save(app.config["UP_LOGO_DIR"] + histlogo.logo)
+        else:
+            if form.logo.data.filename != "":
+                file_logo = secure_filename(form.logo.data.filename)
+                landlogo = Landlogo(
+                    plotnum=form.plotnum.data,
+                    logo=change_filename(file_logo),
+                    status=1
+                )
+                UploadQiniu.upload_qiniu(filestorage=form.logo.data, filename=landlogo.logo)
+                # form.logo.data.save(app.config["UP_LOGO_DIR"] + histlogo.logo)
+
         db.session.add(land)
         db.session.commit()
 
         db.session.add(land_latlng)
+        db.session.add(landlogo)
         db.session.commit()
 
         # 6文件压缩包导入
@@ -862,7 +926,7 @@ def land_edit(land_detail=None, plotnum=None):
 
         redirect(url_for('admin.land_edit', land_detail=land_detail, plotnum=plotnum))
     return render_template('admin/land_edit.html', form=form, land=land, land_latlng=land_latlng,
-                           landpart1=landpart1, landpart2=landpart2, key=key, files=files)
+                           landpart1=landpart1, landpart2=landpart2, key=key, files=files, landlogo=landlogo)
 
 
 # 其他地块列表
@@ -963,9 +1027,27 @@ def landplus_add():
             lat=data["lat"],
             remark=data["remark"]
         )
+
+        if form.logo.data.filename != "":
+            file_logo = secure_filename(form.logo.data.filename)
+            landlogo = Landlogo(
+                plotnum=form.plotnum.data,
+                logo=change_filename(file_logo),
+                status=1
+            )
+            UploadQiniu.upload_qiniu(filestorage=form.logo.data, filename=landlogo.logo)
+            # form.logo.data.save(app.config["UP_LOGO_DIR"] + histlogo.logo)
+        else:
+            landlogo = Landlogo(
+                plotnum=form.plotnum.data,
+                logo='',
+                status=1
+            )
+
         db.session.add(landplus)
         db.session.commit()
         db.session.add(land_latlng)
+        db.session.add(landlogo)
         db.session.commit()
 
         # 6文件压缩包导入
@@ -1006,6 +1088,20 @@ def landplus_edit(plotnum=None):
     land_latlng_count = Landlatlng.query.filter(
         Landlatlng.plotnum == plotnum
     ).count()
+
+    landlogo_count = Landlogo.query.filter(
+        Landlogo.plotnum == plotnum
+    ).count()
+    if landlogo_count >= 1:
+        landlogo = Landlogo.query.filter(
+            Landlogo.plotnum == plotnum
+        ).first()
+    else:
+        landlogo = Landlogo(
+            plotnum=plotnum,
+            logo='',
+            status=1
+        )
 
     try:
         path = os.path.join(app.config["LAND_UP_DIR"], plotnum)
@@ -1070,10 +1166,28 @@ def landplus_edit(plotnum=None):
                 remark=form.remark.data
             )
 
+        if landlogo_count >= 1:
+            if form.logo.data.filename != "":
+                file_logo = secure_filename(form.logo.data.filename)
+                landlogo.logo = change_filename(file_logo)
+                UploadQiniu.upload_qiniu(filestorage=form.logo.data, filename=landlogo.logo)
+                # form.logo.data.save(app.config["UP_LOGO_DIR"] + histlogo.logo)
+        else:
+            if form.logo.data.filename != "":
+                file_logo = secure_filename(form.logo.data.filename)
+                landlogo = Landlogo(
+                    plotnum=form.plotnum.data,
+                    logo=change_filename(file_logo),
+                    status=1
+                )
+                UploadQiniu.upload_qiniu(filestorage=form.logo.data, filename=landlogo.logo)
+                # form.logo.data.save(app.config["UP_LOGO_DIR"] + histlogo.logo)
+
         db.session.add(landplus)
         db.session.commit()
 
         db.session.add(land_latlng)
+        db.session.add(landlogo)
         db.session.commit()
 
         # 6文件压缩包导入
@@ -1096,7 +1210,7 @@ def landplus_edit(plotnum=None):
 
         redirect(url_for('admin.landplus_edit', plotnum=plotnum))
     return render_template('admin/landplus_edit.html', form=form, landplus=landplus, land_latlng=land_latlng,
-                           key=key, files=files)
+                           key=key, files=files, landlogo=landlogo)
 
 
 # 删除其他地块
@@ -1112,6 +1226,13 @@ def landplus_del(plotnum=None):
     )
     if land_latlng.count() >= 1:
         db.session.delete(land_latlng.first())
+        db.session.commit()
+
+    landlogo = Landlogo.query.filter(
+        Landlogo.plotnum == plotnum
+    )
+    if landlogo.count() >= 1:
+        db.session.delete(landlogo.first())
         db.session.commit()
 
     flash("删除成功!", "ok")

@@ -4,6 +4,7 @@ from sqlalchemy import desc, asc
 from app.models import Oplog
 from app import db
 from app.models import Promotion_name, Histlatlng, Landhistsup, Landpart1, Landpart2, Landmanual, Landlatlng, Landplus
+from qiniu import Auth, put_data, etag
 
 op_type = {
     'add': '添加',
@@ -122,3 +123,27 @@ class CheckLandfile:
                 pass
         else:
             pass
+
+
+class UploadQiniu:
+    @classmethod
+    def upload_qiniu(cls, filestorage, filename):
+        access_key = '1vsd9-CswcrF7t30cEA7_IXE6D46jc-8khPbbcXk'
+        secret_key = 'mC4u5nXVgzMmzux32r1HJ0Qn578eAonqS6TsNKs8'
+
+        # 构建鉴权对象
+        q = Auth(access_key, secret_key)
+
+        # 要上传的空间
+        bucket_name = 'blbj-img'
+
+        # # 设置 上传之后保存文件的名字
+        # filename = filestorage.filename
+
+        # 生成上传 Token，可以指定过期时间等
+        token = q.upload_token(bucket_name, filename, 3600)
+
+        # put_file()
+        ret, info = put_data(token, filename, filestorage.read())
+
+        return None
