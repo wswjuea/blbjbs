@@ -181,17 +181,92 @@
                             </div>
                             {% endfor %}
                         </div>
+
                         <div class="form-group">
-                            <label for="input_logo">{{ form.logo.label }}</label>
-                            {{ form.logo }}
-                            {% for err in form.logo.errors %}
+                            <label for="input_logo">{{ form.main_logo.label }}</label>
+                            {{ form.main_logo }}
+                            {% for err in form.main_logo.errors %}
                             <div class="col-md-12">
                                 <font style="color: red">{{ err }}</font>
                             </div>
                             {% endfor %}
-                            <img src={{'http://q3qa2e2ds.bkt.clouddn.com/'+histlogo.logo}} style="margin-top:5px;" class="img-responsive"
+                            <img src={{'http://q40uyupgz.bkt.clouddn.com/'+histlogo.logo}} style="margin-top:5px;"
+                                 class="img-responsive"
                                  alt="">
                         </div>
+
+                        <div class="form-group">
+                            <label for="input_logo">{{ form.housefloor_logo.label }}</label>
+                            {{ form.housefloor_logo(multiple="multiple") }}
+                            {% for err in form.housefloor_logo.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <table class="table table-hover">
+                            <tbody>
+                            <tr>
+                                <th style="text-align: center">图片</th>
+                                <th style="text-align: center">图片名</th>
+                                <th style="text-align: center">操作事项</th>
+                            </tr>
+                            {% for i in histlogo_housefloor_list %}
+                            <tr>
+                                <td>
+                                    <div align="center">
+                                        <img src={{'http://q40uyupgz.bkt.clouddn.com/'+i.logo}}
+                                         style="margin:5px;height: 200px;width: 200px;" class="img-responsive"
+                                         alt="">
+                                    </div>
+                                </td>
+                                <td style="text-align: center">
+                                    {{ i.logo }}
+                                </td>
+                                <td style="text-align: center">
+                                    <a href="{{ url_for('admin.histlogo_del',id=id, presale_license_number=presale_license_number, pid=i.id) }}" class="label label-danger">删除</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <div class="form-group">
+                            <label for="input_logo">{{ form.housemodel_logo.label }}</label>
+                            {{ form.housemodel_logo(multiple="multiple") }}
+                            {% for err in form.housemodel_logo.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <table class="table table-hover">
+                            <tbody>
+                            <tr>
+                                <th style="text-align: center">图片</th>
+                                <th style="text-align: center">图片名</th>
+                                <th style="text-align: center">操作事项</th>
+                            </tr>
+                            {% for i in histlogo_housemodel_list %}
+                            <tr>
+                                <td>
+                                    <div align="center">
+                                        <img src={{'http://q40uyupgz.bkt.clouddn.com/'+i.logo}}
+                                         style="margin:5px;height: 200px;width: 200px;" class="img-responsive"
+                                         alt="">
+                                    </div>
+                                </td>
+                                <td style="text-align: center">
+                                    {{ i.logo }}
+                                </td>
+                                <td style="text-align: center">
+                                    <a href="{{ url_for('admin.histlogo_del',id=id, presale_license_number=presale_license_number, pid=i.id) }}" class="label label-danger">删除</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+
                         <div class="form-group">
                             <label>{{ form.price_file.label }}</label>
                             {{ form.price_file }}

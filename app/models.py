@@ -27,9 +27,21 @@ class Activity(db.Model):
     situation = db.Column(db.String(255))
     link = db.Column(db.String(255))
     status = db.Column(db.SmallInteger)
+    node = db.Column(db.String(255))
 
     def __repr__(self):
         return "<Activity %r>" % self.id
+
+
+# activity_logo
+class Actlogo(db.Model):
+    __bind_key__ = "ginger"
+    __tablename__ = "activity_logo"
+    id = db.Column(db.Integer, primary_key=True)
+    act_id = db.Column(db.Integer)
+    logo = db.Column(db.String(255))
+    status = db.Column(db.SmallInteger)
+    type = db.Column(db.String(255))
 
 
 # 管理员
@@ -145,6 +157,7 @@ class Histlogo(db.Model):
     presale_license_number = db.Column(db.String(255))
     logo = db.Column(db.String(255))
     status = db.Column(db.SmallInteger)
+    type = db.Column(db.String(255))
 
 
 # land_histsup
@@ -310,6 +323,7 @@ class Landlogo(db.Model):
     plotnum = db.Column(db.String(255))
     logo = db.Column(db.String(255))
     status = db.Column(db.SmallInteger)
+    type = db.Column(db.String(255))
 
 
 # 价格

@@ -4,7 +4,7 @@ from sqlalchemy import desc, asc
 from app.models import Oplog
 from app import db
 from app.models import Promotion_name, Histlatlng, Landhistsup, Landpart1, Landpart2, Landmanual, Landlatlng, Landplus
-from qiniu import Auth, put_data, etag
+from qiniu import Auth, put_data, BucketManager
 
 op_type = {
     'add': '添加',
@@ -128,14 +128,14 @@ class CheckLandfile:
 class UploadQiniu:
     @classmethod
     def upload_qiniu(cls, filestorage, filename):
-        access_key = '1vsd9-CswcrF7t30cEA7_IXE6D46jc-8khPbbcXk'
-        secret_key = 'mC4u5nXVgzMmzux32r1HJ0Qn578eAonqS6TsNKs8'
+        access_key = 'XZYZgvtI7Yigf94kL_VRtjM5pjlQXMfVWwQ5jwTp'
+        secret_key = 'UPwb1igmkzMtq4BG6ichZIC7rt8aWak9141ptKq5'
 
         # 构建鉴权对象
         q = Auth(access_key, secret_key)
 
         # 要上传的空间
-        bucket_name = 'blbj-img'
+        bucket_name = 'blbj-jpg'
 
         # # 设置 上传之后保存文件的名字
         # filename = filestorage.filename
@@ -145,5 +145,26 @@ class UploadQiniu:
 
         # put_file()
         ret, info = put_data(token, filename, filestorage.read())
+
+        return None
+
+
+class DeleteQiniu:
+    @classmethod
+    def delete_qiniu(cls, filename):
+        access_key = 'XZYZgvtI7Yigf94kL_VRtjM5pjlQXMfVWwQ5jwTp'
+        secret_key = 'UPwb1igmkzMtq4BG6ichZIC7rt8aWak9141ptKq5'
+
+        # 构建鉴权对象
+        q = Auth(access_key, secret_key)
+
+        # 初始化BucketManager
+        bucket = BucketManager(q)
+
+        # 你要测试的空间， 并且这个key在你空间中存在
+        bucket_name = 'blbj-jpg'
+        key = filename
+
+        ret, info = bucket.delete(bucket_name, key)
 
         return None

@@ -5,11 +5,11 @@ from flask import render_template, redirect, url_for, flash, session, request, s
 from app.admin.forms import LoginForm, PnForm, PwdForm, AdminForm, ActForm, HistForm, HistEditForm, LandEditForm, \
     PriceForm, PriceeditForm, LandPlusForm
 from app.models import Admin, Adminlog, Oplog, Promotion_name, Activity, User, Histworm, Histlatlng, Landhistsup, \
-    Landmanual, Landpart1, Landpart2, Landlatlng, Price, Plnpricefile, Landplus, Feedback, Histlogo, Landlogo
+    Landmanual, Landpart1, Landpart2, Landlatlng, Price, Plnpricefile, Landplus, Feedback, Histlogo, Landlogo, Actlogo
 from app import db, app
 from functools import wraps
 import datetime
-from app.admin.transform import TransForm, HistOrd, LandOrd, LandplusOrd, CheckLandfile, UploadQiniu
+from app.admin.transform import TransForm, HistOrd, LandOrd, LandplusOrd, CheckLandfile, UploadQiniu, DeleteQiniu
 from sqlalchemy import or_, and_
 import os
 import uuid
@@ -210,12 +210,16 @@ def act_add():
     form = ActForm()
     if form.validate_on_submit():
         data = form.data
-        act_count = Activity.query.filter_by(
-            theme=data["theme"]
+        act_count = Activity.query.filter(
+            and_(
+                Activity.building_promotion_name == data["building_promotion_name"],
+                Activity.node == data["node"]
+            )
         ).count()
         if act_count >= 1:
-            flash("活动主题已存在!", "err")
+            flash("该楼盘的活动节点已存在!", "err")
             return redirect(url_for('admin.act_add'))
+
         act = Activity(
             building_promotion_name=data["building_promotion_name"],
             date=data["date"],
@@ -223,10 +227,47 @@ def act_add():
             theme=data["theme"],
             situation=data["situation"],
             link=data["link"],
+            node=data["node"],
             status=1
         )
         db.session.add(act)
         db.session.commit()
+
+        act = Activity.query.filter(
+            and_(
+                Activity.building_promotion_name == data["building_promotion_name"],
+                Activity.node == data["node"]
+            )
+        ).first()
+        act_id = act.id
+
+        if form.main_logo.data.filename != "":
+            file_logo = secure_filename(form.main_logo.data.filename)
+            actlogo = Actlogo(
+                act_id=act_id,
+                logo=change_filename(file_logo),
+                type='main_logo',
+                status=1
+            )
+            UploadQiniu.upload_qiniu(filestorage=form.main_logo.data, filename=actlogo.logo)
+            db.session.add(actlogo)
+
+        # 详情图可以多文件上传
+        file_obj_scene_logo = request.files.getlist('detail_logo')
+        if file_obj_scene_logo[0].filename != '':
+            for file in file_obj_scene_logo:
+                file_logo = secure_filename(file.filename)
+                actlogo_detail = Actlogo(
+                    act_id=act_id,
+                    logo=change_filename(file_logo),
+                    type='detail_logo',
+                    status=1
+                )
+                UploadQiniu.upload_qiniu(filestorage=file, filename=actlogo_detail.logo)
+                db.session.add(actlogo_detail)
+
+        db.session.commit()
+
         flash("添加活动成功!", "ok")
 
         TransForm.oplog_add(o_type='add', type='act', da_attr=data["theme"])
@@ -261,6 +302,14 @@ def act_list(page=None):
 def act_del(id=None):
     act = Activity.query.filter_by(id=id).first_or_404()
     db.session.delete(act)
+
+    actlogo = Actlogo.query.filter(
+        Actlogo.act_id == id
+    )
+    for item in actlogo:
+        DeleteQiniu.delete_qiniu(filename=item.logo)
+        db.session.delete(item)
+
     db.session.commit()
     flash("删除活动成功!", "ok")
 
@@ -277,15 +326,64 @@ def act_edit(id=None):
 
     form = ActForm()
     act = Activity.query.get_or_404(id)
+
+    # 没有上传主图时,返回数据库中最新的主图或''
+    actlogo_count = Actlogo.query.filter(
+        and_(
+            Actlogo.act_id == id,
+            Actlogo.type == 'main_logo'
+        )
+    ).count()
+    if actlogo_count >= 1:
+        actlogo = Actlogo.query.filter(
+            and_(
+                Actlogo.act_id == id,
+                Actlogo.type == 'main_logo'
+            )
+        ).order_by(
+            Actlogo.id.desc()
+        ).first()
+    else:
+        actlogo = Actlogo(
+            act_id=id,
+            logo='',
+            type='main_logo',
+            status=1
+        )
+
+    # 已存在详情图
+    actlogo_detail_count = Actlogo.query.filter(
+        and_(
+            Actlogo.act_id == id,
+            Actlogo.type == 'detail_logo'
+        )
+    ).count()
+    if actlogo_detail_count >= 1:
+        actlogo_detail_list = Actlogo.query.filter(
+            and_(
+                Actlogo.act_id == id,
+                Actlogo.type == 'detail_logo'
+            )
+        ).order_by(
+            Actlogo.id.desc()
+        ).all()
+    else:
+        actlogo_detail_list = []
+
     if form.validate_on_submit():
         data = form.data
-        act_count = Activity.query.filter_by(
-            theme=data["theme"]
-        ).count()
-        if act.theme != data["theme"] and \
-                act_count >= 1:
-            flash("活动主题已存在!", "err")
-            return redirect(url_for('admin.act_edit', id=id))
+        if act.building_promotion_name == data["building_promotion_name"] and act.node == data["node"]:
+            pass
+        else:
+            act_count = Activity.query.filter(
+                and_(
+                    Activity.building_promotion_name == data["building_promotion_name"],
+                    Activity.node == data["node"]
+                )
+            ).count()
+            if act_count >= 1:
+                flash("该楼盘的活动节点已存在!", "err")
+                return redirect(url_for('admin.act_edit', id=id))
 
         act.building_promotion_name = data["building_promotion_name"]
         act.date = data["date"]
@@ -293,6 +391,28 @@ def act_edit(id=None):
         act.theme = data["theme"]
         act.situation = data["situation"]
         act.link = data["link"]
+        act.node = data["node"]
+
+        # 主图如果存在则覆盖,保证只有一张主图
+        if form.main_logo.data.filename != "":
+            file_logo = secure_filename(form.main_logo.data.filename)
+            actlogo.logo = change_filename(file_logo)
+            UploadQiniu.upload_qiniu(filestorage=form.main_logo.data, filename=actlogo.logo)
+            db.session.add(actlogo)
+
+        # 详情图可以多文件上传
+        file_obj_scene_logo = request.files.getlist('detail_logo')
+        if file_obj_scene_logo[0].filename != '':
+            for file in file_obj_scene_logo:
+                file_logo = secure_filename(file.filename)
+                actlogo_detail = Actlogo(
+                    act_id=id,
+                    logo=change_filename(file_logo),
+                    type='detail_logo',
+                    status=1
+                )
+                UploadQiniu.upload_qiniu(filestorage=file, filename=actlogo_detail.logo)
+                db.session.add(actlogo_detail)
 
         db.session.add(act)
         db.session.commit()
@@ -301,7 +421,22 @@ def act_edit(id=None):
         TransForm.oplog_add(o_type='edit', type='act', da_attr=data["theme"])
 
         redirect(url_for('admin.act_edit', id=id))
-    return render_template('admin/act_edit.html', form=form, act=act, key=key)
+    return render_template('admin/act_edit.html', form=form, act=act, key=key,
+                           actlogo=actlogo, actlogo_detail_list=actlogo_detail_list,
+                           id=id)
+
+# 删除活动图片
+@admin.route("/actlogo/del/<int:id>/<int:pid>/", methods=["GET"])
+@admin_login_req
+def actlogo_del(id=None, pid=None):
+    actlogo = Actlogo.query.get_or_404(int(pid))
+    DeleteQiniu.delete_qiniu(filename=actlogo.logo)
+    db.session.delete(actlogo)
+    db.session.commit()
+
+    flash("删除图片成功!", "ok")
+
+    return redirect(url_for('admin.act_edit', id=id))
 
 
 # 管理员操作日志
@@ -577,19 +712,66 @@ def hist_edit(id=None, presale_license_number=None):
         Plnpricefile.id.desc()
     ).first()
 
+    # 没有上传主图时,返回数据库中最新的主图或''
     histlogo_count = Histlogo.query.filter(
-        Histlogo.presale_license_number == presale_license_number
+        and_(
+            Histlogo.presale_license_number == presale_license_number,
+            Histlogo.type == 'main_logo'
+        )
     ).count()
     if histlogo_count >= 1:
         histlogo = Histlogo.query.filter(
-            Histlogo.presale_license_number == presale_license_number
+            and_(
+                Histlogo.presale_license_number == presale_license_number,
+                Histlogo.type == 'main_logo'
+            )
+        ).order_by(
+            Histlogo.id.desc()
         ).first()
     else:
         histlogo = Histlogo(
             presale_license_number=presale_license_number,
             logo='',
+            type='main_logo',
             status=1
         )
+
+    # 已存在户型图和样板房
+    histlogo_housefloor_count = Histlogo.query.filter(
+        and_(
+            Histlogo.presale_license_number == presale_license_number,
+            Histlogo.type == 'housefloor_logo'
+        )
+    ).count()
+    if histlogo_housefloor_count >= 1:
+        histlogo_housefloor_list = Histlogo.query.filter(
+            and_(
+                Histlogo.presale_license_number == presale_license_number,
+                Histlogo.type == 'housefloor_logo'
+            )
+        ).order_by(
+            Histlogo.id.desc()
+        ).all()
+    else:
+        histlogo_housefloor_list = []
+
+    histlogo_housemodel_count = Histlogo.query.filter(
+        and_(
+            Histlogo.presale_license_number == presale_license_number,
+            Histlogo.type == 'housemodel_logo'
+        )
+    ).count()
+    if histlogo_housemodel_count >= 1:
+        histlogo_housemodel_list = Histlogo.query.filter(
+            and_(
+                Histlogo.presale_license_number == presale_license_number,
+                Histlogo.type == 'housemodel_logo'
+            )
+        ).order_by(
+            Histlogo.id.desc()
+        ).all()
+    else:
+        histlogo_housemodel_list = []
 
     if form.validate_on_submit():
         data = form.data
@@ -652,22 +834,44 @@ def hist_edit(id=None, presale_license_number=None):
                 预售商品房=form.presale_type.data
             )
 
-        if histlogo_count >= 1:
-            if form.logo.data.filename != "":
-                file_logo = secure_filename(form.logo.data.filename)
-                histlogo.logo = change_filename(file_logo)
-                UploadQiniu.upload_qiniu(filestorage=form.logo.data, filename=histlogo.logo)
-                # form.logo.data.save(app.config["UP_LOGO_DIR"] + histlogo.logo)
+        # 主图如果存在则覆盖,保证只有一张主图
+        if form.main_logo.data.filename != "":
+            file_logo = secure_filename(form.main_logo.data.filename)
+            histlogo.logo = change_filename(file_logo)
+            UploadQiniu.upload_qiniu(filestorage=form.main_logo.data, filename=histlogo.logo)
+            db.session.add(histlogo)
+            # form.main_logo.data.save(app.config["UP_LOGO_DIR"] + histlogo.logo)
         else:
-            if form.logo.data.filename != "":
-                file_logo = secure_filename(form.logo.data.filename)
-                histlogo = Histlogo(
+            if histlogo_count == 0:
+                flash("主图未上传!", "err")
+                return redirect(url_for('admin.hist_edit', id=id, presale_license_number=presale_license_number))
+
+        # 户型图和样板房可以多文件上传
+        file_obj_housefloor_logo = request.files.getlist('housefloor_logo')
+        if file_obj_housefloor_logo[0].filename != '':
+            for file in file_obj_housefloor_logo:
+                file_logo = secure_filename(file.filename)
+                histlogo_housefloor = Histlogo(
                     presale_license_number=form.presale_license_number.data,
                     logo=change_filename(file_logo),
+                    type='housefloor_logo',
                     status=1
                 )
-                UploadQiniu.upload_qiniu(filestorage=form.logo.data, filename=histlogo.logo)
-                # form.logo.data.save(app.config["UP_LOGO_DIR"] + histlogo.logo)
+                UploadQiniu.upload_qiniu(filestorage=file, filename=histlogo_housefloor.logo)
+                db.session.add(histlogo_housefloor)
+
+        file_obj_housemodel_logo = request.files.getlist('housemodel_logo')
+        if file_obj_housemodel_logo[0].filename != '':
+            for file in file_obj_housemodel_logo:
+                file_logo = secure_filename(file.filename)
+                histlogo_housemodel = Histlogo(
+                    presale_license_number=form.presale_license_number.data,
+                    logo=change_filename(file_logo),
+                    type='housemodel_logo',
+                    status=1
+                )
+                UploadQiniu.upload_qiniu(filestorage=file, filename=histlogo_housemodel.logo)
+                db.session.add(histlogo_housemodel)
 
         db.session.add(hist)
         db.session.commit()
@@ -679,7 +883,6 @@ def hist_edit(id=None, presale_license_number=None):
         db.session.commit()
 
         db.session.add(histworm)
-        db.session.add(histlogo)
         db.session.commit()
 
         # 添加价格数据
@@ -736,7 +939,24 @@ def hist_edit(id=None, presale_license_number=None):
 
         redirect(url_for('admin.hist_edit', id=id, presale_license_number=presale_license_number))
     return render_template('admin/hist_edit.html', form=form, hist=hist, hist_latlng=hist_latlng, hist_land=hist_land,
-                           histworm=histworm, plnpricefile=plnpricefile, key=key, histlogo=histlogo)
+                           histworm=histworm, plnpricefile=plnpricefile, key=key, histlogo=histlogo,
+                           histlogo_housefloor_list=histlogo_housefloor_list,
+                           histlogo_housemodel_list=histlogo_housemodel_list,
+                           id=id, presale_license_number=presale_license_number)
+
+
+# 删除楼盘图片
+@admin.route("/histlogo/del/<int:id>/<string:presale_license_number>/<int:pid>/", methods=["GET"])
+@admin_login_req
+def histlogo_del(id=None, presale_license_number=None, pid=None):
+    histlogo = Histlogo.query.get_or_404(int(pid))
+    DeleteQiniu.delete_qiniu(filename=histlogo.logo)
+    db.session.delete(histlogo)
+    db.session.commit()
+
+    flash("删除图片成功!", "ok")
+
+    return redirect(url_for('admin.hist_edit', id=id, presale_license_number=presale_license_number))
 
 
 # 删除楼盘
@@ -834,19 +1054,48 @@ def land_edit(land_detail=None, plotnum=None):
         Landlatlng.plotnum == plotnum
     ).count()
 
+    # 没有上传主图时,返回数据库中最新的主图或''
     landlogo_count = Landlogo.query.filter(
-        Landlogo.plotnum == plotnum
+        and_(
+            Landlogo.plotnum == plotnum,
+            Landlogo.type == 'main_logo'
+        )
     ).count()
     if landlogo_count >= 1:
         landlogo = Landlogo.query.filter(
-            Landlogo.plotnum == plotnum
+            and_(
+                Landlogo.plotnum == plotnum,
+                Landlogo.type == 'main_logo'
+            )
+        ).order_by(
+            Landlogo.id.desc()
         ).first()
     else:
         landlogo = Landlogo(
             plotnum=plotnum,
             logo='',
+            type='main_logo',
             status=1
         )
+
+    # 已存在现场图
+    landlogo_scene_count = Landlogo.query.filter(
+        and_(
+            Landlogo.plotnum == plotnum,
+            Landlogo.type == 'scene_logo'
+        )
+    ).count()
+    if landlogo_scene_count >= 1:
+        landlogo_scene_list = Landlogo.query.filter(
+            and_(
+                Landlogo.plotnum == plotnum,
+                Landlogo.type == 'scene_logo'
+            )
+        ).order_by(
+            Landlogo.id.desc()
+        ).all()
+    else:
+        landlogo_scene_list = []
 
     try:
         path = os.path.join(app.config["LAND_UP_DIR"], plotnum)
@@ -882,28 +1131,35 @@ def land_edit(land_detail=None, plotnum=None):
                 remark=form.remark.data
             )
 
-        if landlogo_count >= 1:
-            if form.logo.data.filename != "":
-                file_logo = secure_filename(form.logo.data.filename)
-                landlogo.logo = change_filename(file_logo)
-                UploadQiniu.upload_qiniu(filestorage=form.logo.data, filename=landlogo.logo)
-                # form.logo.data.save(app.config["UP_LOGO_DIR"] + histlogo.logo)
+        # 主图如果存在则覆盖,保证只有一张主图
+        if form.main_logo.data.filename != "":
+            file_logo = secure_filename(form.main_logo.data.filename)
+            landlogo.logo = change_filename(file_logo)
+            UploadQiniu.upload_qiniu(filestorage=form.main_logo.data, filename=landlogo.logo)
+            db.session.add(landlogo)
         else:
-            if form.logo.data.filename != "":
-                file_logo = secure_filename(form.logo.data.filename)
-                landlogo = Landlogo(
+            if landlogo_count == 0:
+                flash("主图未上传!", "err")
+                return redirect(url_for('admin.land_edit', land_detail=land_detail, plotnum=plotnum))
+
+        # 现场图可以多文件上传
+        file_obj_scene_logo = request.files.getlist('scene_logo')
+        if file_obj_scene_logo[0].filename != '':
+            for file in file_obj_scene_logo:
+                file_logo = secure_filename(file.filename)
+                landlogo_scene = Landlogo(
                     plotnum=form.plotnum.data,
                     logo=change_filename(file_logo),
+                    type='scene_logo',
                     status=1
                 )
-                UploadQiniu.upload_qiniu(filestorage=form.logo.data, filename=landlogo.logo)
-                # form.logo.data.save(app.config["UP_LOGO_DIR"] + histlogo.logo)
+                UploadQiniu.upload_qiniu(filestorage=file, filename=landlogo_scene.logo)
+                db.session.add(landlogo_scene)
 
         db.session.add(land)
         db.session.commit()
 
         db.session.add(land_latlng)
-        db.session.add(landlogo)
         db.session.commit()
 
         # 6文件压缩包导入
@@ -928,8 +1184,20 @@ def land_edit(land_detail=None, plotnum=None):
 
         redirect(url_for('admin.land_edit', land_detail=land_detail, plotnum=plotnum))
     return render_template('admin/land_edit.html', form=form, land=land, land_latlng=land_latlng,
-                           landpart1=landpart1, landpart2=landpart2, key=key, files=files, landlogo=landlogo)
+                           landpart1=landpart1, landpart2=landpart2, key=key, files=files, landlogo=landlogo, landlogo_scene_list=landlogo_scene_list, land_detail=land_detail, plotnum=plotnum)
 
+# 删除地块图片
+@admin.route("/landlogo/del/<string:land_detail>/<string:plotnum>/<int:pid>/", methods=["GET"])
+@admin_login_req
+def landlogo_del(land_detail=None, plotnum=None, pid=None):
+    landlogo = Landlogo.query.get_or_404(int(pid))
+    DeleteQiniu.delete_qiniu(filename=landlogo.logo)
+    db.session.delete(landlogo)
+    db.session.commit()
+
+    flash("删除图片成功!", "ok")
+
+    return redirect(url_for('admin.land_edit', land_detail=land_detail, plotnum=plotnum))
 
 # 其他地块列表
 @admin.route("/landplus/list/<int:page>/", methods=["GET"])
@@ -1030,26 +1298,38 @@ def landplus_add():
             remark=data["remark"]
         )
 
-        if form.logo.data.filename != "":
-            file_logo = secure_filename(form.logo.data.filename)
+        if form.main_logo.data.filename != "":
+            file_logo = secure_filename(form.main_logo.data.filename)
             landlogo = Landlogo(
                 plotnum=form.plotnum.data,
                 logo=change_filename(file_logo),
+                type='main_logo',
                 status=1
             )
-            UploadQiniu.upload_qiniu(filestorage=form.logo.data, filename=landlogo.logo)
+            UploadQiniu.upload_qiniu(filestorage=form.main_logo.data, filename=landlogo.logo)
+            db.session.add(landlogo)
             # form.logo.data.save(app.config["UP_LOGO_DIR"] + histlogo.logo)
         else:
-            landlogo = Landlogo(
-                plotnum=form.plotnum.data,
-                logo='',
-                status=1
-            )
+            flash("主图未上传!", "err")
+            return redirect(url_for('admin.landplus_add'))
+
+        # 现场图可以多文件上传
+        file_obj_scene_logo = request.files.getlist('scene_logo')
+        if file_obj_scene_logo[0].filename != '':
+            for file in file_obj_scene_logo:
+                file_logo = secure_filename(file.filename)
+                landlogo_scene = Landlogo(
+                    plotnum=form.plotnum.data,
+                    logo=change_filename(file_logo),
+                    type='scene_logo',
+                    status=1
+                )
+                UploadQiniu.upload_qiniu(filestorage=file, filename=landlogo_scene.logo)
+                db.session.add(landlogo_scene)
 
         db.session.add(landplus)
         db.session.commit()
         db.session.add(land_latlng)
-        db.session.add(landlogo)
         db.session.commit()
 
         # 6文件压缩包导入
@@ -1093,19 +1373,33 @@ def landplus_edit(plotnum=None):
         Landlatlng.plotnum == plotnum
     ).count()
 
-    landlogo_count = Landlogo.query.filter(
-        Landlogo.plotnum == plotnum
-    ).count()
-    if landlogo_count >= 1:
-        landlogo = Landlogo.query.filter(
-            Landlogo.plotnum == plotnum
-        ).first()
-    else:
-        landlogo = Landlogo(
-            plotnum=plotnum,
-            logo='',
-            status=1
+    landlogo = Landlogo.query.filter(
+        and_(
+            Landlogo.plotnum == plotnum,
+            Landlogo.type == 'main_logo'
         )
+    ).order_by(
+        Landlogo.id.desc()
+    ).first()
+
+    # 已存在现场图
+    landlogo_scene_count = Landlogo.query.filter(
+        and_(
+            Landlogo.plotnum == plotnum,
+            Landlogo.type == 'scene_logo'
+        )
+    ).count()
+    if landlogo_scene_count >= 1:
+        landlogo_scene_list = Landlogo.query.filter(
+            and_(
+                Landlogo.plotnum == plotnum,
+                Landlogo.type == 'scene_logo'
+            )
+        ).order_by(
+            Landlogo.id.desc()
+        ).all()
+    else:
+        landlogo_scene_list = []
 
     try:
         path = os.path.join(app.config["LAND_UP_DIR"], plotnum)
@@ -1170,28 +1464,31 @@ def landplus_edit(plotnum=None):
                 remark=form.remark.data
             )
 
-        if landlogo_count >= 1:
-            if form.logo.data.filename != "":
-                file_logo = secure_filename(form.logo.data.filename)
-                landlogo.logo = change_filename(file_logo)
-                UploadQiniu.upload_qiniu(filestorage=form.logo.data, filename=landlogo.logo)
-                # form.logo.data.save(app.config["UP_LOGO_DIR"] + histlogo.logo)
-        else:
-            if form.logo.data.filename != "":
-                file_logo = secure_filename(form.logo.data.filename)
-                landlogo = Landlogo(
+        # 保证只有一张主图
+        if form.main_logo.data.filename != "":
+            file_logo = secure_filename(form.main_logo.data.filename)
+            landlogo.logo = change_filename(file_logo)
+            UploadQiniu.upload_qiniu(filestorage=form.main_logo.data, filename=landlogo.logo)
+            db.session.add(landlogo)
+
+        # 现场图可以多文件上传
+        file_obj_scene_logo = request.files.getlist('scene_logo')
+        if file_obj_scene_logo[0].filename != '':
+            for file in file_obj_scene_logo:
+                file_logo = secure_filename(file.filename)
+                landlogo_scene = Landlogo(
                     plotnum=form.plotnum.data,
                     logo=change_filename(file_logo),
+                    type='scene_logo',
                     status=1
                 )
-                UploadQiniu.upload_qiniu(filestorage=form.logo.data, filename=landlogo.logo)
-                # form.logo.data.save(app.config["UP_LOGO_DIR"] + histlogo.logo)
+                db.session.add(landlogo_scene)
+                UploadQiniu.upload_qiniu(filestorage=file, filename=landlogo_scene.logo)
 
         db.session.add(landplus)
         db.session.commit()
 
         db.session.add(land_latlng)
-        db.session.add(landlogo)
         db.session.commit()
 
         # 6文件压缩包导入
@@ -1216,7 +1513,22 @@ def landplus_edit(plotnum=None):
 
         redirect(url_for('admin.landplus_edit', plotnum=plotnum))
     return render_template('admin/landplus_edit.html', form=form, landplus=landplus, land_latlng=land_latlng,
-                           key=key, files=files, landlogo=landlogo)
+                           key=key, files=files, landlogo=landlogo,
+                           landlogo_scene_list=landlogo_scene_list,
+                           plotnum=plotnum)
+
+# 删除其他地块图片
+@admin.route("/landpluslogo/del/<string:plotnum>/<int:pid>/", methods=["GET"])
+@admin_login_req
+def landpluslogo_del(plotnum=None, pid=None):
+    landlogo = Landlogo.query.get_or_404(int(pid))
+    DeleteQiniu.delete_qiniu(filename=landlogo.logo)
+    db.session.delete(landlogo)
+    db.session.commit()
+
+    flash("删除图片成功!", "ok")
+
+    return redirect(url_for('admin.landplus_edit', plotnum=plotnum))
 
 
 # 删除其他地块
@@ -1237,9 +1549,10 @@ def landplus_del(plotnum=None):
     landlogo = Landlogo.query.filter(
         Landlogo.plotnum == plotnum
     )
-    if landlogo.count() >= 1:
-        db.session.delete(landlogo.first())
-        db.session.commit()
+    for item in landlogo:
+        DeleteQiniu.delete_qiniu(filename=item.logo)
+        db.session.delete(item)
+    db.session.commit()
 
     flash("删除成功!", "ok")
     TransForm.oplog_add(o_type='del', type='landp', da_attr=landplus.plotnum)

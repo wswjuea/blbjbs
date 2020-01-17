@@ -17,7 +17,7 @@
                     <a href="{{ url_for('admin.act_list',key=key,page=1) }}" class="btn btn-success"
                        style="float: right;">返回</a>
                 </div>
-                <form role="form" method="post" novalidate>
+                <form role="form" method="post" novalidate enctype="multipart/form-data">
                     <div class="box-body">
                         {% for msg in get_flashed_messages(category_filter=["ok"]) %}
                         <div class="alert alert-success alert-dismissible">
@@ -61,6 +61,15 @@
                             {% endfor %}
                         </div>
                         <div class="form-group">
+                            <label for="input_name">{{ form.node.label }}</label>
+                            {{ form.node(value=act.node) }}
+                            {% for err in form.node.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
                             <label for="input_name">{{ form.theme.label }}</label>
                             {{ form.theme(value=act.theme) }}
                             {% for err in form.theme.errors %}
@@ -87,6 +96,57 @@
                             </div>
                             {% endfor %}
                         </div>
+
+                        <div class="form-group">
+                            <label for="input_logo">{{ form.main_logo.label }}</label>
+                            {{ form.main_logo }}
+                            {% for err in form.main_logo.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                            <img src={{'http://q40uyupgz.bkt.clouddn.com/'+actlogo.logo}} style="margin-top:5px;"
+                                 class="img-responsive"
+                                 alt="">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input_logo">{{ form.detail_logo.label }}</label>
+                            {{ form.detail_logo(multiple="multiple") }}
+                            {% for err in form.detail_logo.errors %}
+                            <div class="col-md-12">
+                                <font style="color: red">{{ err }}</font>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <table class="table table-hover">
+                            <tbody>
+                            <tr>
+                                <th style="text-align: center">图片</th>
+                                <th style="text-align: center">图片名</th>
+                                <th style="text-align: center">操作事项</th>
+                            </tr>
+                            {% for i in actlogo_detail_list %}
+                            <tr>
+                                <td>
+                                    <div align="center">
+                                        <img src={{'http://q40uyupgz.bkt.clouddn.com/'+i.logo}}
+                                             style="margin:5px;height: 200px;width: 200px;" class="img-responsive"
+                                             alt="">
+                                    </div>
+                                </td>
+                                <td style="text-align: center">
+                                    {{ i.logo }}
+                                </td>
+                                <td style="text-align: center">
+                                    <a href="{{ url_for('admin.actlogo_del', id=id, pid=i.id) }}"
+                                       class="label label-danger">删除</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+
                     </div>
                     <div class="box-footer">
                         {{ form.csrf_token }}

@@ -126,6 +126,17 @@ class ActForm(FlaskForm):
             "placeholder": "请输入活动主办单位！"
         }
     )
+    node = StringField(
+        label="活动节点",
+        validators=[
+            DataRequired("请输入活动节点!")
+        ],
+        description="活动节点",
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入活动节点！"
+        }
+    )
     theme = StringField(
         label="活动主题",
         validators=[
@@ -158,6 +169,14 @@ class ActForm(FlaskForm):
             "class": "form-control",
             "placeholder": "请输入活动链接！"
         }
+    )
+    main_logo = FileField(
+        label="主图",
+        description="主图"
+    )
+    detail_logo = MultipleFileField(
+        label="详情图",
+        description="详情图"
     )
     submit = SubmitField(
         label="确认",
@@ -513,12 +532,17 @@ class HistEditForm(FlaskForm):
             "placeholder": "请输入预售商品房！"
         }
     )
-    logo = FileField(
-        label="图片",
-        # validators=[
-        #     DataRequired("请上传图片!")
-        # ],
-        description="图片"
+    main_logo = FileField(
+        label="主图",
+        description="主图"
+    )
+    housefloor_logo = MultipleFileField(
+        label="户型图",
+        description="户型图"
+    )
+    housemodel_logo = MultipleFileField(
+        label="样板房",
+        description="样板房"
     )
     price_file = FileField(
         label="文件",
@@ -701,12 +725,13 @@ class LandEditForm(FlaskForm):
             "placeholder": "请输入是否已修改！"
         }
     )
-    logo = FileField(
-        label="图片",
-        # validators=[
-        #     DataRequired("请上传图片!")
-        # ],
-        description="图片"
+    main_logo = FileField(
+        label="主图",
+        description="主图"
+    )
+    scene_logo = MultipleFileField(
+        label="现场图",
+        description="现场图"
     )
     land_file = MultipleFileField(
         label="文件",
@@ -1128,12 +1153,13 @@ class LandPlusForm(FlaskForm):
             "placeholder": "请输入是否已修改！"
         }
     )
-    logo = FileField(
-        label="图片",
-        # validators=[
-        #     DataRequired("请上传图片!")
-        # ],
-        description="图片"
+    main_logo = FileField(
+        label="主图",
+        description="主图"
+    )
+    scene_logo = MultipleFileField(
+        label="现场图",
+        description="现场图"
     )
     land_file = MultipleFileField(
         label="文件",
